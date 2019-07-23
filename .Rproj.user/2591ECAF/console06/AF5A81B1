@@ -2,3 +2,148 @@
 Initialized empty Git repository in /Users/june/Dropbox/YT_Lab/BY2M/.git/
 ]0;~/Dropbox/YT_Lab/BY2Mrorqual:BY2M june$ git remote add origin https://github.com/roqe/T2GA.git[K[K[K[K[K[K[K[KBY2M,gt[K[K[K.git
 ]0;~/Dropbox/YT_Lab/BY2Mrorqual:BY2M june$ git add .
+]0;~/Dropbox/YT_Lab/BY2Mrorqual:BY2M june$ git commit -m "fixed: some bugs"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"i"r"s"t" "v"e"s"i"o"b"[1P"[1P"[1P"[1P"r"s"i"o"n"
+[master (root-commit) 605433a] first version
+ Committer: June Lai <june@rorqual.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 80 files changed, 1615 insertions(+)
+ create mode 100644 .DS_Store
+ create mode 100644 .Rbuildignore
+ create mode 100644 .Rhistory
+ create mode 100644 .Rproj.user/2591ECAF/console06/AF5A81B1
+ create mode 100644 .Rproj.user/2591ECAF/console06/AF5A81B1.env
+ create mode 100644 .Rproj.user/2591ECAF/console06/INDEX001
+ create mode 100644 .Rproj.user/2591ECAF/cpp-definition-cache
+ create mode 100644 .Rproj.user/2591ECAF/pcs/debug-breakpoints.pper
+ create mode 100644 .Rproj.user/2591ECAF/pcs/files-pane.pper
+ create mode 100644 .Rproj.user/2591ECAF/pcs/packages-pane.pper
+ create mode 100644 .Rproj.user/2591ECAF/pcs/source-pane.pper
+ create mode 100644 .Rproj.user/2591ECAF/pcs/windowlayoutstate.pper
+ create mode 100644 .Rproj.user/2591ECAF/pcs/workbench-pane.pper
+ create mode 100644 .Rproj.user/2591ECAF/persistent-state
+ create mode 100644 .Rproj.user/2591ECAF/saved_source_markers
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/14445B02
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/17358E7C
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/22E2C459
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/2FEE71AD
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/4063F49B
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/4293849F
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/4710A33B
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/4E2D3BF2
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/60183793
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/6CB812C9
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/6D274657
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/70524CAA
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/76B94498
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/77093839
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/7D71AC67
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/887D62B2
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/8BC62FE8
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/9157C04C
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/960A2E21
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/9E8BB053
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/A8B785AE
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/AC2EBFF5
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/CAA86596
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/D2E3881F
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/D7F133A9
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/DF7A9C6D
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/E1FE58CC
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/E4CF1DCE
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/F4245C55
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/FAD43159
+ create mode 100644 .Rproj.user/2591ECAF/sources/prop/INDEX
+ create mode 100644 .Rproj.user/2591ECAF/sources/s-139f083a/1A71CE92-contents
+ create mode 100644 .Rproj.user/2591ECAF/sources/s-139f083a/1BE2C2B5
+ create mode 100644 .Rproj.user/2591ECAF/sources/s-139f083a/1BE2C2B5-contents
+ create mode 100644 .Rproj.user/2591ECAF/sources/s-139f083a/23375F49-contents
+ create mode 100644 .Rproj.user/2591ECAF/sources/s-139f083a/3A59D820-contents
+ create mode 100644 .Rproj.user/2591ECAF/sources/s-139f083a/3D6983A4-contents
+ create mode 100644 .Rproj.user/2591ECAF/sources/s-139f083a/50D8C0B9-contents
+ create mode 100644 .Rproj.user/2591ECAF/sources/s-139f083a/5BD6609F-contents
+ create mode 100644 .Rproj.user/2591ECAF/sources/s-139f083a/6107B15E-contents
+ create mode 100644 .Rproj.user/2591ECAF/sources/s-139f083a/6FEC9C2E-contents
+ create mode 100644 .Rproj.user/2591ECAF/sources/s-139f083a/AE36C955-contents
+ create mode 100644 .Rproj.user/2591ECAF/sources/s-139f083a/D9B7DC94
+ create mode 100644 .Rproj.user/2591ECAF/sources/s-139f083a/D9B7DC94-contents
+ create mode 100644 .Rproj.user/2591ECAF/sources/s-139f083a/lock_file
+ create mode 100644 .Rproj.user/shared/notebooks/patch-chunk-names
+ create mode 100644 .Rproj.user/shared/notebooks/paths
+ create mode 100644 BY2M.Rproj
+ create mode 100644 DESCRIPTION
+ create mode 100644 NAMESPACE
+ create mode 100644 R/.DS_Store
+ create mode 100644 R/calc_true_value.R
+ create mode 100644 R/check.R
+ create mode 100644 R/create_var_boot.R
+ create mode 100644 R/create_vmatrix.R
+ create mode 100644 R/mediation_analysis.R
+ create mode 100644 R/omega.R
+ create mode 100644 R/pse.R
+ create mode 100644 R/rd.R
+ create mode 100644 R/rr.R
+ create mode 100644 R/sim_mediation_data.R
+ create mode 100644 man/calc_true_value.Rd
+ create mode 100644 man/hello.Rd
+ create mode 100644 man/mediation_analysis.Rd
+ create mode 100644 man/sim_mediation_data.Rd
+]0;~/Dropbox/YT_Lab/BY2Mrorqual:BY2M june$ git push -u origin master
+error: cannot run rpostback-askpass: No such file or directory
+Username for 'https://github.com': roqe
+error: cannot run rpostback-askpass: No such file or directory
+Password for 'https://roqe@github.com': 
+remote: Invalid username or password.
+fatal: Authentication failed for 'https://github.com/roqe/BY2M.git/'
+]0;~/Dropbox/YT_Lab/BY2Mrorqual:BY2M june$ git push -u origin mastercommit -m "first version"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[4Ppush -u origin master
+error: cannot run rpostback-askpass: No such file or directory
+Username for 'https://github.com': roqe
+error: cannot run rpostback-askpass: No such file or directory
+Password for 'https://roqe@github.com': 
+Enumerating objects: 76, done.
+Counting objects:   1% (1/76)   Counting objects:   2% (2/76)   Counting objects:   3% (3/76)   Counting objects:   5% (4/76)   Counting objects:   6% (5/76)   Counting objects:   7% (6/76)   Counting objects:   9% (7/76)   Counting objects:  10% (8/76)   Counting objects:  11% (9/76)   Counting objects:  13% (10/76)   Counting objects:  14% (11/76)   Counting objects:  15% (12/76)   Counting objects:  17% (13/76)   Counting objects:  18% (14/76)   Counting objects:  19% (15/76)   Counting objects:  21% (16/76)   Counting objects:  22% (17/76)   Counting objects:  23% (18/76)   Counting objects:  25% (19/76)   Counting objects:  26% (20/76)   Counting objects:  27% (21/76)   Counting objects:  28% (22/76)   Counting objects:  30% (23/76)   Counting objects:  31% (24/76)   Counting objects:  32% (25/76)   Counting objects:  34% (26/76)   Counting objects:  35% (27/76)   Counting objects:  36% (28/76)   Counting objects:  38% (29/76)   Counting objects:  39% (30/76)   Counting objects:  40% (31/76)   Counting objects:  42% (32/76)   Counting objects:  43% (33/76)   Counting objects:  44% (34/76)   Counting objects:  46% (35/76)   Counting objects:  47% (36/76)   Counting objects:  48% (37/76)   Counting objects:  50% (38/76)   Counting objects:  51% (39/76)   Counting objects:  52% (40/76)   Counting objects:  53% (41/76)   Counting objects:  55% (42/76)   Counting objects:  56% (43/76)   Counting objects:  57% (44/76)   Counting objects:  59% (45/76)   Counting objects:  60% (46/76)   Counting objects:  61% (47/76)   Counting objects:  63% (48/76)   Counting objects:  64% (49/76)   Counting objects:  65% (50/76)   Counting objects:  67% (51/76)   Counting objects:  68% (52/76)   Counting objects:  69% (53/76)   Counting objects:  71% (54/76)   Counting objects:  72% (55/76)   Counting objects:  73% (56/76)   Counting objects:  75% (57/76)   Counting objects:  76% (58/76)   Counting objects:  77% (59/76)   Counting objects:  78% (60/76)   Counting objects:  80% (61/76)   Counting objects:  81% (62/76)   Counting objects:  82% (63/76)   Counting objects:  84% (64/76)   Counting objects:  85% (65/76)   Counting objects:  86% (66/76)   Counting objects:  88% (67/76)   Counting objects:  89% (68/76)   Counting objects:  90% (69/76)   Counting objects:  92% (70/76)   Counting objects:  93% (71/76)   Counting objects:  94% (72/76)   Counting objects:  96% (73/76)   Counting objects:  97% (74/76)   Counting objects:  98% (75/76)   Counting objects: 100% (76/76)   Counting objects: 100% (76/76), done.
+Delta compression using up to 4 threads
+Compressing objects:   1% (1/68)   Compressing objects:   2% (2/68)   Compressing objects:   4% (3/68)   Compressing objects:   5% (4/68)   Compressing objects:   7% (5/68)   Compressing objects:   8% (6/68)   Compressing objects:  10% (7/68)   Compressing objects:  11% (8/68)   Compressing objects:  13% (9/68)   Compressing objects:  14% (10/68)   Compressing objects:  16% (11/68)   Compressing objects:  17% (12/68)   Compressing objects:  19% (13/68)   Compressing objects:  20% (14/68)   Compressing objects:  22% (15/68)   Compressing objects:  23% (16/68)   Compressing objects:  25% (17/68)   Compressing objects:  26% (18/68)   Compressing objects:  27% (19/68)   Compressing objects:  29% (20/68)   Compressing objects:  30% (21/68)   Compressing objects:  32% (22/68)   Compressing objects:  33% (23/68)   Compressing objects:  35% (24/68)   Compressing objects:  36% (25/68)   Compressing objects:  38% (26/68)   Compressing objects:  39% (27/68)   Compressing objects:  41% (28/68)   Compressing objects:  42% (29/68)   Compressing objects:  44% (30/68)   Compressing objects:  45% (31/68)   Compressing objects:  47% (32/68)   Compressing objects:  48% (33/68)   Compressing objects:  50% (34/68)   Compressing objects:  51% (35/68)   Compressing objects:  52% (36/68)   Compressing objects:  54% (37/68)   Compressing objects:  55% (38/68)   Compressing objects:  57% (39/68)   Compressing objects:  58% (40/68)   Compressing objects:  60% (41/68)   Compressing objects:  61% (42/68)   Compressing objects:  63% (43/68)   Compressing objects:  64% (44/68)   Compressing objects:  66% (45/68)   Compressing objects:  67% (46/68)   Compressing objects:  69% (47/68)   Compressing objects:  70% (48/68)   Compressing objects:  72% (49/68)   Compressing objects:  73% (50/68)   Compressing objects:  75% (51/68)   Compressing objects:  76% (52/68)   Compressing objects:  77% (53/68)   Compressing objects:  79% (54/68)   Compressing objects:  80% (55/68)   Compressing objects:  82% (56/68)   Compressing objects:  83% (57/68)   Compressing objects:  85% (58/68)   Compressing objects:  86% (59/68)   Compressing objects:  88% (60/68)   Compressing objects:  89% (61/68)   Compressing objects:  91% (62/68)   Compressing objects:  92% (63/68)   Compressing objects:  94% (64/68)   Compressing objects:  95% (65/68)   Compressing objects:  97% (66/68)   Compressing objects:  98% (67/68)   Compressing objects: 100% (68/68)   Compressing objects: 100% (68/68), done.
+Writing objects:   1% (1/76)   Writing objects:   2% (2/76)   Writing objects:   5% (4/76)   Writing objects:   6% (5/76)   Writing objects:   7% (6/76)   Writing objects:   9% (7/76)   Writing objects:  10% (8/76)   Writing objects:  11% (9/76)   Writing objects:  13% (10/76)   Writing objects:  14% (11/76)   Writing objects:  15% (12/76)   Writing objects:  17% (13/76)   Writing objects:  18% (14/76)   Writing objects:  19% (15/76)   Writing objects:  21% (16/76)   Writing objects:  22% (17/76)   Writing objects:  23% (18/76)   Writing objects:  25% (19/76)   Writing objects:  26% (20/76)   Writing objects:  27% (21/76)   Writing objects:  28% (22/76)   Writing objects:  30% (23/76)   Writing objects:  31% (24/76)   Writing objects:  32% (25/76)   Writing objects:  34% (26/76)   Writing objects:  35% (27/76)   Writing objects:  36% (28/76)   Writing objects:  38% (29/76)   Writing objects:  39% (30/76)   Writing objects:  40% (31/76)   Writing objects:  42% (32/76)   Writing objects:  43% (33/76)   Writing objects:  44% (34/76)   Writing objects:  46% (35/76)   Writing objects:  47% (36/76)   Writing objects:  48% (37/76)   Writing objects:  50% (38/76)   Writing objects:  51% (39/76)   Writing objects:  52% (40/76)   Writing objects:  53% (41/76)   Writing objects:  55% (42/76)   Writing objects:  56% (43/76)   Writing objects:  57% (44/76)   Writing objects:  59% (45/76)   Writing objects:  60% (46/76)   Writing objects:  61% (47/76)   Writing objects:  63% (48/76)   Writing objects:  64% (49/76)   Writing objects:  65% (50/76)   Writing objects:  68% (52/76)   Writing objects:  69% (53/76)   Writing objects:  71% (54/76)   Writing objects:  72% (55/76)   Writing objects:  73% (56/76)   Writing objects:  75% (57/76)   Writing objects:  76% (58/76)   Writing objects:  77% (59/76)   Writing objects:  78% (60/76)   Writing objects:  80% (61/76)   Writing objects:  81% (62/76)   Writing objects:  82% (63/76)   Writing objects:  84% (64/76)   Writing objects:  85% (65/76)   Writing objects:  86% (66/76)   Writing objects:  88% (67/76)   Writing objects:  89% (68/76)   Writing objects:  90% (69/76)   Writing objects:  92% (70/76)   Writing objects:  93% (71/76)   Writing objects:  94% (72/76)   Writing objects:  96% (73/76)   Writing objects:  97% (74/76)   Writing objects:  98% (75/76)   Writing objects: 100% (76/76)   Writing objects: 100% (76/76), 19.09 KiB | 78.00 KiB/s, done.
+Total 76 (delta 4), reused 0 (delta 0)
+remote: Resolving deltas:   0% (0/4)   [Kremote: Resolving deltas:  25% (1/4)   [Kremote: Resolving deltas:  50% (2/4)   [Kremote: Resolving deltas:  75% (3/4)   [Kremote: Resolving deltas: 100% (4/4)   [Kremote: Resolving deltas: 100% (4/4), done.[K
+To https://github.com/roqe/BY2M.git
+ * [new branch]      master -> master
+Branch 'master' set up to track remote branch 'master' from 'origin'.
+git push -u origin mastercommit -m "first version"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[K
+]0;~/Dropbox/YT_Lab/BY2Mrorqual:BY2M june$ git add .push -u origin mastercommit -m "first version"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[Kremote add origin https://github.com/roqe/BY2M.git[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[Kcommit -m "first version"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[4Ppush -u origin master
+error: cannot run rpostback-askpass: No such file or directory
+Username for 'https://github.com': roqe
+error: cannot run rpostback-askpass: No such file or directory
+Password for 'https://roqe@github.com': 
+Branch 'master' set up to track remote branch 'master' from 'origin'.
+Everything up-to-date
+git push -u origin masteradd .[K
+]0;~/Dropbox/YT_Lab/BY2Mrorqual:BY2M june$ git add .push -u origin master
+error: cannot run rpostback-askpass: No such file or directory
+Username for 'https://github.com': roqe
+error: cannot run rpostback-askpass: No such file or directory
+Password for 'https://roqe@github.com': 
+Branch 'master' set up to track remote branch 'master' from 'origin'.
+Everything up-to-date
+git remote add origin https://github.com/roqe/T2GA.git
+fatal: remote origin already exists.
+]0;~/Dropbox/YT_Lab/BY2Mrorqual:BY2M june$ git add .
+]0;~/Dropbox/YT_Lab/BY2Mrorqual:BY2M june$ git push -u origin master
+error: cannot run rpostback-askpass: No such file or directory
+Username for 'https://github.com': roqe
+error: cannot run rpostback-askpass: No such file or directory
+Password for 'https://roqe@github.com': 
+Branch 'master' set up to track remote branch 'master' from 'origin'.
+Everything up-to-date
+]0;~/Dropbox/YT_Lab/BY2Mrorqual:BY2M june$ git push -u origin master[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kgit add .

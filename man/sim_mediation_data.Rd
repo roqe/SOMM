@@ -19,7 +19,8 @@ sim_mediation_data(exp, sample_size, SC)
 Simulate data for analysis.
 }
 \examples{
-dat1=sim_mediation_data(0.5,1000,c(rep(-0.5,9),1,1))
+para=c(rep(-0.5,9),1,1)
+dat1=sim_mediation_data(0.5,1000,para) #binary exposure
 apply(dat1,2,mean) #the proportion of Y should not be too skew (nearly 0 or 1)
-dat2=sim_mediation_data(c(0,1),1000,c(rep(-0.5,9),1,1))
+dat2=sim_mediation_data(c(0,1),1000,para) #continous exposure
 }

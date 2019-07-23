@@ -4,7 +4,7 @@
 #' @param confounders Confounder values.
 #' @param nb Number of bootstrapping. Default is 0 (no bootstrapping applied).
 #' @param intv Number of intervention, 3 or 4. Default is 3.
-#' @keywords Mediation.
+#' @keywords Mediation analysis, Causal inference.
 #' @export
 #' @examples
 #' para=c(rep(-0.5,9),1,1)

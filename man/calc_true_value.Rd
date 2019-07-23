@@ -15,6 +15,7 @@ calc_true_value(SC, intv = 3)
 Calculate true value of PSEs.
 }
 \examples{
-calc_true_value(rep(0.5,11))
-calc_true_value(rep(0.5,11), intv=4)
+para=c(rep(-0.5,9),1,1)
+tru3=calc_true_value(para)
+tru4=calc_true_value(para, intv=4)
 }

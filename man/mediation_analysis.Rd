@@ -20,13 +20,15 @@ Apply mediation analysis for non-rare binary outcome with two continuous mediato
 }
 \examples{
 para=c(rep(-0.5,9),1,1)
-dat1=sim_mediation_data(0.5,1000,para)
+dat1=sim_mediation_data(0.5,1000,para) #binary exposure
 apply(dat1,2,mean) #the proportion of Y should not be too skew (nearly 0 or 1)
 res1_3=mediation_analysis(dat1)
-res1_4=mediation_analysis(dat1, intv=4)
 tru1_3=calc_true_value(para)
-dat2=sim_mediation_data(c(0,1),1000,para)
-res2_3=mediation_analysis(dat2)
+dat2=sim_mediation_data(c(0,1),1000,para) #continous exposure
 res2_4=mediation_analysis(dat2, intv=4)
+tru2_4=calc_true_value(para, intv=4)
 }
-\keyword{Mediation.}
+\keyword{Causal}
+\keyword{Mediation}
+\keyword{analysis,}
+\keyword{inference.}
