@@ -1,0 +1,42 @@
+http://kbroman.org/pkg_primer/pages/github.html
+http://datavu.blogspot.tw/2015/01/how-to-create-and-publish-r-package-on.html
+http://r-pkgs.had.co.nz/release.html
+http://kbroman.org/pkg_primer/pages/cran.html
+https://cran.r-project.org/doc/manuals/R-exts.html
+https://guides.github.com/activities/hello-world/
+
+https://hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/
+http://kbroman.org/pkg_primer/pages/depends.html
+http://r-pkgs.had.co.nz/data.html
+
+library(devtools)
+library(roxygen2)
+
+setwd("~/Dropbox/YT_Lab/BY2M/")
+document()
+setwd("..")
+install("BY2M")
+
+
+
+setwd("~/Dropbox/Wu_Lab/T2GA")
+document()
+setwd("..")
+install("T2GA")
+dat1=importdata(TCR_5min)
+res1=computeT2(dat1)
+dat2=importdata(fileName1=TCR_5min,fileName2=TCR_15min)
+res2=computeT2(dat2,pathDB="Reactome",ppi=HitPredict_v4)
+
+#shell
+## initialization
+git init
+git remote add origin https://github.com/roqe/T2GA.git
+## update: local to github
+git add .
+git commit -m "fixed: some bugs"
+git push -u origin master
+## update: github to local
+git pull %update files from github
+## passphrase
+8cbf4bf957971a3d40877317fe238ef9

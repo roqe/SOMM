@@ -1,0 +1,238 @@
+sim.mediation.calc=function(exp,SC,intv=3,confounders=c(),num_sample=1000,num_simulation=1000,nc=100,nb=500){
+  t0=Sys.time()
+  te=calc.true.value(SC,intv=intv)
+  R=do.call(rbind,mclapply(1:num_simulation,function(i){
+    dt=as.data.frame(sim.mediation.data(exp,num_sample,i,SC))
+    return(c(apply(dt[,2:4],2,mean), mediation.analysis(dt,intv=intv,nb=nb)))
+  },mc.cores = nc))
+  if(nb==0){
+    hat=sapply(1:length(te),function(i){ return(c(mean(R[,4*i]),sd(R[,4*i]),mean((R[,4*i]-te[i])^2))) })
+    psecp=sapply(1:length(te),function(i){ return(check(te[i],R[,(4*i):(4*i+3)])) })
+    end=length(te)*4+4
+  }else{
+    hat=sapply(1:length(te),function(i){ return(c(mean(R[,7*i-3]),sd(R[,7*i-3]),mean((R[,7*i-3]-te[i])^2))) })
+    psecp=sapply(1:length(te),function(i){ return(c(check(te[i],R[,(7*i-3):(7*i+3)]),check(te[i],R[,(7*i):(7*i+3)]))) })
+    end=length(te)*7+4
+  }
+  sm=c(apply(R[,1:3],2,mean),
+       te,hat,psecp,apply(R[,end:(end+length(te)/2+2)],2,mean),
+       sum(te[seq(1,length(te),by=2)]),prod(te[seq(2,length(te),by=2)]),
+       sapply(1:9,function(i){ 
+         return(check(SC[i],cbind(R[,end+length(te)/2+2+i],
+                                  R[,end+length(te)/2+2+i]-1.96*R[,end+length(te)/2+2+i+9],
+                                  R[,end+length(te)/2+2+i]+1.96*R[,end+length(te)/2+2+i+9])))
+       }))
+  t1=Sys.time()
+  print(difftime(t1,t0))
+  return(sm)
+}
+
+mediation.analysis=function(dt,confounders=c(),nb=500,intv=3){
+  dt=as.data.frame(dt)
+  colnames(dt)[1:4]=c("Y","W","Q","S")
+  y.reg=glm(Y~., family = binomial(link="probit"), data=dt)
+  s.reg=lm(S~.-Y, data=dt)
+  q.reg=lm(Q~.-S-Y, data=dt)
+  beta.hat=summary(y.reg)$coefficients[,1]
+  alpha.hat=summary(s.reg)$coefficients[,1]
+  delta.hat=summary(q.reg)$coefficients[,1]
+  ss.hat=sqrt(mean((s.reg$residuals)^2)) #Mean squared error, double check
+  sq.hat=sqrt(mean((q.reg$residuals)^2))
+  V.matrix=create.vmatrix(y.reg,s.reg,q.reg)
+  theta=c(beta.hat[1:4], alpha.hat[1:3], delta.hat[1:2], sapply(1:9,function(s){ return(sqrt(V.matrix[s,s])) }))
+  
+  total.effect=summary(glm(Y~.-Q-S, family = binomial (link="probit"), data=dt))$coefficients[,1]
+  total.rd=pnorm(sum(total.effect*c(1,1,confounders)))-pnorm(sum(total.effect*c(1,0,confounders))) #when S=1 compared to S=0
+  total.rr=pnorm(sum(total.effect*c(1,1,confounders)))/pnorm(sum(total.effect*c(1,0,confounders))) 
+  
+  if(nb>0){
+    var.boot=create.var.boot(nb, dt, confounders=confounders, intv=intv)
+    total=dim(var.boot)[1]
+    b.RD1=c(quantile(var.boot[,1], probs=c(0.025, 0.975)))
+    b.RD2=c(quantile(var.boot[,3], probs=c(0.025, 0.975)))
+    b.RD3=c(quantile(var.boot[,5], probs=c(0.025, 0.975)))
+    b.RR1=c(quantile(var.boot[,2], probs=c(0.025, 0.975)))
+    b.RR2=c(quantile(var.boot[,4], probs=c(0.025, 0.975)))
+    b.RR3=c(quantile(var.boot[,6], probs=c(0.025, 0.975)))
+    #null hypothesis is 0 no effect in path
+    valRD1=sum(var.boot[,1]>0)/total
+    pvalRD1=min(valRD1,(1-valRD1))*2
+    valRD2=sum(var.boot[,3]>0)/total
+    pvalRD2=min(valRD2,(1-valRD2))*2
+    valRD3=sum(var.boot[,5]>0)/total
+    pvalRD3=min(valRD3,(1-valRD3))*2
+    #null hypothesis is log(1) no difference in log(relative risk). This is done in the log scale since it is more normally distributed
+    valRR1=sum(log(var.boot[,2])>0)/total
+    pvalRR1=min(valRR1,(1-valRR1))*2
+    valRR2=sum(log(var.boot[,4])>0)/total
+    pvalRR2=min(valRR2,(1-valRR2))*2
+    valRR3=sum(log(var.boot[,6])>0)/total
+    pvalRR3=min(valRR3,(1-valRR3))*2 
+  }
+  
+  if(intv==3){
+    source("intv3.R",local=T)
+    if(nb>0){
+      out.put=c(RD1,b.RD1,pvalRD1,RR1,b.RR1,pvalRR1,
+                RD2,b.RD2,pvalRD2,RR2,b.RR2,pvalRR2,
+                RD3,b.RD3,pvalRD3,RR3,b.RR3,pvalRR3,
+                p000[1],p100[1],p110[1],p111[1],total.rd,total.rr,theta)      
+    }else{
+      out.put=c(RD1,RR1,RD2,RR2,RD3,RR3,
+                p000[1],p100[1],p110[1],p111[1],total.rd,total.rr,theta) 
+    }
+  }else if(intv==4){
+    source("intv4.R",local=T)
+    if(nb>0){
+      b.RD4=c(quantile(var.boot[,7], probs=c(0.025, 0.975)))
+      b.RR4=c(quantile(var.boot[,8], probs=c(0.025, 0.975)))
+      valRD4=sum(var.boot[,7]>0)/total
+      pvalRD4=min(valRD4,(1-valRD4))*2
+      valRR4=sum(log(var.boot[,8])>0)/total
+      pvalRR4=min(valRR4,(1-valRR4))*2
+      out.put=c(RD1,b.RD1,pvalRD1,RR1,b.RR1,pvalRR1,
+                RD2,b.RD2,pvalRD2,RR2,b.RR2,pvalRR2,
+                RD3,b.RD3,pvalRD3,RR3,b.RR3,pvalRR3,
+                RD4,b.RD4,pvalRD4,RR4,b.RR4,pvalRR4,
+                p0000[1],p1000[1],p1100[1],p1110[1],p1111[1],total.rd,total.rr,theta)      
+    }else{
+      out.put=c(RD1,RR1,RD2,RR2,RD3,RR3,RR4,RD4,
+                p0000[1],p1000[1],p1100[1],p1110[1],p1111[1],total.rd,total.rr,theta)
+    }
+  }
+  return(out.put)
+}
+
+create.var.boot=function(nb, dt, confounders=c(), intv=3){
+  var.boot=matrix(NA, nr=nb, nc=8)
+  for(boot.count in 1:nb){
+    set.seed(37+boot.count*3)
+    dt.boot=as.data.frame(dt[sample(1:nrow(dt), replace=TRUE),]) 
+    y.reg=glm(Y~., family = binomial (link="probit"), data=dt.boot)
+    s.reg=lm(S~.-Y, data=dt.boot)
+    q.reg=lm(Q~.-Y-S, data=dt.boot) 
+    beta.hat=summary(y.reg)$coefficients[,1]
+    alpha.hat=summary(s.reg)$coefficients[,1]
+    delta.hat=summary(q.reg)$coefficients[,1]
+    ss.hat=sqrt(mean((s.reg$residuals)^2)) 
+    sq.hat=sqrt(mean((q.reg$residuals)^2))
+    V.matrix=matrix()
+    if(intv==3){
+      source("intv3.R",local = T)
+      var.boot[boot.count,]=c(RD1,RR1,RD2,RR2,RD3,RR3,NA,NA)
+    }else if(intv==4){
+      source("intv4.R",local = T)
+      var.boot[boot.count,]=c(RD1,RR1,RD2,RR2,RD3,RR3,RD4,RR4)
+    }
+  }
+  return(var.boot)
+}
+
+check=function(value, result.matrix){ 
+  sum(result.matrix[,2]<value & result.matrix[,3]>value)/nrow(result.matrix)
+}
+
+calc.true.value=function(SC,intv=3){
+  if(intv==3){
+    PSEs=c(pse(SC,w1=c(1,0,0),w2=c(0,0,0)),
+           pse(SC,w1=c(1,1,0),w2=c(1,0,0)),
+           pse(SC,w1=c(1,1,1),w2=c(1,1,0)))
+  }else if(intv==4){
+    PSEs=c(pse(SC,w1=c(1,0,0,0),w2=c(0,0,0,0)),
+           pse(SC,w1=c(1,1,0,0),w2=c(1,0,0,0)),
+           pse(SC,w1=c(1,1,1,0),w2=c(1,1,0,0)),
+           pse(SC,w1=c(1,1,1,1),w2=c(1,1,1,0)))
+  }
+  return(PSEs)
+}
+
+pse=function(SC,w1,w2){
+  first=omega(SC,w1)[1]
+  second=omega(SC,w2)[1]
+  rd=first-second 
+  rr=first/second
+  return(c(rd,rr))
+}
+
+omega=function(SC,w,confounders=c()){
+  source("para.R",local = T)
+  mu.q=d0+dw*w[3]+sum(dX*confounders)
+  if(length(w)==3){
+    mu.s=a0+aw*w[2]+aq*mu.q+sum(aX*confounders)
+    mu=b0+bw*w[1]+bq*mu.q+bs*mu.s+sum(bX*confounders)
+    sd=sqrt(((aq*bs+bq)^2)*(sq^2)+(ss^2)*(bs^2)+1)
+    y=mu/sd
+    dB0=exp(-y^2/2)/(sqrt(2*pi)*sd) 
+    dbw=dB0*w[1]
+    dbq=dB0*(mu.q-y*(bq+bs*aq)*sq^2/sd) 
+    dbs=dB0*(mu.s-y*(bs*ss^2+(bs*aq+bq)*aq*sq^2)/sd)
+    da0=dB0*bs
+    daw=da0*w[2]
+    daq=da0*(mu.q-y*(bq+bs*aq)*sq^2/sd)
+    dd0=dB0*(bq+bs*aq)
+    ddw=dd0*w[3]
+  }else if(length(w)==4){
+    mu.q.star=d0+dw*w[4]+sum(dX*confounders)
+    mu.s=a0+aw*w[2]+aq*mu.q.star+sum(aX*confounders)
+    mu=b0+bw*w[1]+bq*mu.q+bs*mu.s+sum(bX*confounders)
+    sd=sqrt((aq^2*bs^2+bq^2)*(sq^2)+(ss^2)*(bs^2)+1)
+    y=mu/sd
+    dB0=exp(-y^2/2)/(sqrt(2*pi)*sd) #derivative beta 0
+    dbw=dB0*w[1] #derivative beta s
+    dbq=dB0*(mu.q-y*bq*sq^2/sd) #derivative beta m 
+    dbs=dB0*(mu.s-y*(bs*ss^2+bs*aq^2*sq^2)/sd) #derivative beta g 
+    da0=dB0*bs#derivative for alyha 0
+    daw=da0*w[2]#derivative for alyha s
+    daq=da0*(mu.q.star-y*sq^2*aq*bs^2/sd) #derivative for alyha m
+    dd0=dB0*(bq+bs*aq)#derivative for delta 0
+    ddw=dB0*(bq*w[3]+bs*aq*w[4])#derivative for delta s
+  }
+  dBX=dB0*confounders
+  daX=da0*confounders
+  ddX=dd0*confounders 
+  derivatives=c(dB0, dbw, dbq, dbs, dBX, da0, daw, daq, daX, dd0, ddw, ddX)
+  return(c(pnorm(y), derivatives))
+}
+
+create.vmatrix=function(y.reg, s.reg, q.reg){
+  beta.hat=length(summary(y.reg)$coefficients[,1])
+  alpha.hat=length(summary(s.reg)$coefficients[,1])
+  delta.hat=length(summary(q.reg)$coefficients[,1])
+  dimensions=sum(beta.hat+alpha.hat+delta.hat)
+  V.matrix=matrix(0, nr=dimensions, nc=dimensions)
+  V.matrix[c(1:beta.hat),c(1:beta.hat)]=vcov(y.reg)
+  V.matrix[c((1+beta.hat):(beta.hat+alpha.hat)),c((1+beta.hat):(beta.hat+alpha.hat))]=vcov(s.reg)
+  V.matrix[c((1+beta.hat+alpha.hat):(beta.hat+alpha.hat+delta.hat)),c((1+beta.hat+alpha.hat):(beta.hat+alpha.hat+delta.hat))]=vcov(q.reg)
+  return(V.matrix)
+}
+
+rd=function(pa,pb,V){
+  path=pa[1]-pb[1]
+  der=matrix(pa[-1]-pb[-1], nrow=1)
+  std.error=sqrt(der%*%V%*%t(der))
+  pv=2*min(pnorm(abs(path/std.error)),1-pnorm(abs(path/std.error)))
+  return(c(path, path-1.96*std.error, path+1.96*std.error, pv))
+}
+
+rr=function(pa,pb,V){
+  path=pa[1]/pb[1]
+  der=matrix((pa[-1]/pa[1])-(pb[-1]/pb[1]),nrow=1)
+  std.error=sqrt(der%*%V%*%t(der))
+  pv=2*min(pnorm(abs(log(path)/std.error)),1-pnorm(abs(log(path)/std.error)))
+  return(c(path, exp(log(path)-1.96*std.error), exp(log(path)+1.96*std.error), pv))
+}
+
+sim.mediation.data=function(exp,sample.size,j,SC){ 
+  source("para.R",local = T)
+  set.seed(j*17+37)
+  if(length(exp)==1){
+    W=c(rep(0,(1-exp)*sample.size),rep(1,exp*sample.size))
+  }else{
+    W=rnorm(sample.size,mean=exp[1],sd=exp[2])
+  }
+  Q=d0+dw*W+rnorm(sample.size,0,sq)
+  S=a0+aw*W+aq*Q+rnorm(sample.size,0,ss)
+  y=b0+bw*W+bq*Q+bs*S+rnorm(sample.size,0,1) 
+  Y=ifelse(y<0,0,1)
+  return(cbind(W,Q,S,Y))
+}

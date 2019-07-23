@@ -1,0 +1,24 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1563892968400.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "771261975",
+    "id" : "D9B7DC94",
+    "lastKnownWriteTime" : 1563894044,
+    "last_content_update" : 1563894044172,
+    "path" : "~/Dropbox/YT_Lab/BY2M/R/mediation_analysis.R",
+    "project_path" : "R/mediation_analysis.R",
+    "properties" : {
+        "cursorPosition" : "11,48",
+        "notebook_format" : "html_document",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 8,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
