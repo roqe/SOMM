@@ -13,7 +13,7 @@
 #' res1_3=mediation_analysis(dat1)
 #' tru1_3=calc_true_value(para)
 #' dat2=sim_mediation_data(c(0,1),1000,para) #continous exposure
-#' res2_4=mediation_analysis(dat2, intv=4)
+#' res2_4=mediation_analysis(dat2, intv=4, nb=500)
 #' tru2_4=calc_true_value(para, intv=4)
 
 mediation_analysis=function(dt,confounders=c(),nb=0,intv=3){
