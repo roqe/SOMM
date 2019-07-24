@@ -4,8 +4,8 @@
 #' @param confounders Confounder values.
 #' @param sample_size Number of samples.
 #' @param SC A vector of parameters, in order of: b0, bw, bq, bs, a0, aw, aq, d0, dw, sigma_q, sigma_s, where
-#'    Q=rnorm(sample_size,d0+dwW,sigma_q)
-#'    S=rnorm(sample_size,a0+awW+aqQ,sigma_s)
+#'    Q=rnorm(sample_size,d0+dwW,sigma_q),
+#'    S=rnorm(sample_size,a0+awW+aqQ,sigma_s),
 #'    Y=ifelse(rnorm(sample_size,b0+bwW+bqQ+bsS,1)<0,0,1)
 #' @export
 #' @examples
