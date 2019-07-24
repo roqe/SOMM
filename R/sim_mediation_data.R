@@ -3,7 +3,10 @@
 #' @param exp For binary exposure, enter the exposure prevalence. For continuous exposure, enter the mean and sd of a normal distribution.
 #' @param confounders Confounder values.
 #' @param sample_size Number of samples.
-#' @param SC A vector of parameters, in order of: b0, bw, bq, bs, a0, aw, aq, d0, dw, sigma_q, sigma_s.
+#' @param SC A vector of parameters, in order of: b0, bw, bq, bs, a0, aw, aq, d0, dw, sigma_q, sigma_s, where
+#'     Q=rnorm(sample_size,d0+dwW,sigma_q)
+#'     S=rnorm(sample_size,a0+awW+aqQ,sigma_s)
+#'     Y=ifelse(rnorm(sample_size,b0+bwW+bqQ+bsS,1)<0,0,1)
 #' @export
 #' @examples
 #' para=c(rep(-0.5,9),1,1)
@@ -17,9 +20,8 @@ sim_mediation_data=function(exp,sample_size,SC){
   }else{
     W=rnorm(sample_size,mean=exp[1],sd=exp[2])
   }
-  Q=SC[8]+SC[9]*W+rnorm(sample_size,0,SC[10])
-  S=SC[5]+SC[6]*W+SC[7]*Q+rnorm(sample_size,0,SC[11])
-  y=SC[1]+SC[2]*W+SC[3]*Q+SC[4]*S+rnorm(sample_size,0,1)
-  Y=ifelse(y<0,0,1)
+  Q=rnorm(sample_size,SC[8]+SC[9]*W,SC[10])
+  S=rnorm(sample_size,SC[5]+SC[6]*W+SC[7]*Q,SC[11])
+  Y=ifelse(rnorm(sample_size,SC[1]+SC[2]*W+SC[3]*Q+SC[4]*S,1)<0,0,1)
   return(cbind(Y,W,Q,S))
 }
