@@ -367,3 +367,37 @@ To https://github.com/roqe/BY2M.git
    a99b960..f9edf47  master -> master
 Branch 'master' set up to track remote branch 'master' from 'origin'.
 ]0;~/Dropbox/YT_Lab/BY2Mrorqual:BY2M june$ git push -u origin mastercommit -m "add more description"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[K
+]0;~/Dropbox/YT_Lab/BY2Mrorqual:BY2M june$ git add .push -u origin mastercommit -m "add more description"
+[master 82c27d4] add more description
+ Committer: June Lai <june@rorqual.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 4 files changed, 37 insertions(+), 3 deletions(-)
+ delete mode 100644 .DS_Store
+ delete mode 100644 R/.DS_Store
+]0;~/Dropbox/YT_Lab/BY2Mrorqual:BY2M june$ git commit -m "add more description"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[Kpush -u origin master
+error: cannot run rpostback-askpass: No such file or directory
+Username for 'https://github.com': roqe
+error: cannot run rpostback-askpass: No such file or directory
+Password for 'https://roqe@github.com': 
+Enumerating objects: 15, done.
+Counting objects:   6% (1/15)   Counting objects:  13% (2/15)   Counting objects:  20% (3/15)   Counting objects:  26% (4/15)   Counting objects:  33% (5/15)   Counting objects:  40% (6/15)   Counting objects:  46% (7/15)   Counting objects:  53% (8/15)   Counting objects:  60% (9/15)   Counting objects:  66% (10/15)   Counting objects:  73% (11/15)   Counting objects:  80% (12/15)   Counting objects:  86% (13/15)   Counting objects:  93% (14/15)   Counting objects: 100% (15/15)   Counting objects: 100% (15/15), done.
+Delta compression using up to 4 threads
+Compressing objects:  12% (1/8)   Compressing objects:  25% (2/8)   Compressing objects:  37% (3/8)   Compressing objects:  50% (4/8)   Compressing objects:  62% (5/8)   Compressing objects:  75% (6/8)   Compressing objects:  87% (7/8)   Compressing objects: 100% (8/8)   Compressing objects: 100% (8/8), done.
+Writing objects:  12% (1/8)   Writing objects:  25% (2/8)   Writing objects:  37% (3/8)   Writing objects:  50% (4/8)   Writing objects:  62% (5/8)   Writing objects:  75% (6/8)   Writing objects:  87% (7/8)   Writing objects: 100% (8/8)   Writing objects: 100% (8/8), 1.20 KiB | 10.00 KiB/s, done.
+Total 8 (delta 5), reused 0 (delta 0)
+remote: Resolving deltas:   0% (0/5)   [Kremote: Resolving deltas:  20% (1/5)   [Kremote: Resolving deltas:  40% (2/5)   [Kremote: Resolving deltas:  60% (3/5)   [Kremote: Resolving deltas:  80% (4/5)   [Kremote: Resolving deltas: 100% (5/5)   [Kremote: Resolving deltas: 100% (5/5), completed with 5 local objects.[K
+To https://github.com/roqe/BY2M.git
+   f9edf47..82c27d4  master -> master
+Branch 'master' set up to track remote branch 'master' from 'origin'.
+]0;~/Dropbox/YT_Lab/BY2Mrorqual:BY2M june$ git push -u origin mastercommit -m "add more description"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[K
