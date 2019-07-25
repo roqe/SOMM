@@ -10,8 +10,7 @@ create_var_boot=function(nb, dt, confounders=c(), intv=3){
     delta.hat=summary(q.reg)$coefficients[,1]
     ss.hat=sqrt(mean((s.reg$residuals)^2))
     sq.hat=sqrt(mean((q.reg$residuals)^2))
-    csize=length(beta.hat)-5
-    theta_hat=c(beta.hat[1:4], alpha.hat[1:3], delta.hat[1:2], sq.hat, ss.hat, beta.hat[5:(5+csize)], alpha.hat[4:(4+csize)], delta.hat[3:(3+csize)])
+    theta_hat=list(beta.hat, alpha.hat, delta.hat, sq.hat, ss.hat)
     if(intv==3){
       p000=omega(theta_hat, c(0,0,0), confounders)
       p100=omega(theta_hat, c(1,0,0), confounders) #first part of difference
