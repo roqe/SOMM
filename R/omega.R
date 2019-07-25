@@ -11,9 +11,9 @@ omega=function(SC,w,confounders=c()){
   sq=SC[10]
   ss=SC[11]
   if(length(SC)>11){
-    bX=SC[12]
-    aX=SC[13]
-    dX=SC[14]
+    bX=SC[12:(12+csize)]
+    aX=SC[(12+csize+1):(12+csize*2+1)]
+    dX=SC[(12+csize*2+2):(12+csize*3+2)]
   }else{ bX=aX=dX=0 }
   mu.q=d0+dw*w[3]+sum(dX*confounders)
   if(length(w)==3){
