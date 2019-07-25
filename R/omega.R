@@ -1,19 +1,20 @@
 omega=function(SC,w,confounders=c()){
-  b0=SC[1]
-  bw=SC[2]
-  bq=SC[3]
-  bs=SC[4]
-  a0=SC[5]
-  aw=SC[6]
-  aq=SC[7]
-  d0=SC[8]
-  dw=SC[9]
-  sq=SC[10]
-  ss=SC[11]
-  if(length(SC)>11){
-    bX=SC[12:(12+csize)]
-    aX=SC[(12+csize+1):(12+csize*2+1)]
-    dX=SC[(12+csize*2+2):(12+csize*3+2)]
+  b0=SC[[1]][1]
+  bw=SC[[1]][2]
+  bq=SC[[1]][3]
+  bs=SC[[1]][4]
+  a0=SC[[2]][1]
+  aw=SC[[2]][2]
+  aq=SC[[2]][3]
+  d0=SC[[3]][1]
+  dw=SC[[3]][2]
+  sq=SC[[4]]
+  ss=SC[[5]]
+  bl=length(SC[[1]])
+  if(bl>4){
+    bX=SC[[1]][5:bl]
+    aX=SC[[2]][4:(bl-1)]
+    dX=SC[[3]][3:(bl-2)]
   }else{ bX=aX=dX=0 }
   mu.q=d0+dw*w[3]+sum(dX*confounders)
   if(length(w)==3){
