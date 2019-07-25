@@ -474,3 +474,21 @@ To https://github.com/roqe/BY2M.git
    3e94230..ccc0c90  master -> master
 Branch 'master' set up to track remote branch 'master' from 'origin'.
 [Krorqual:BY2M june$ git push -u origin mastercommit -m "add more description"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[K
+]0;~/Dropbox/YT_Lab/BY2Mrorqual:BY2M june$ git add .push -u origin mastercommit -m "add more description"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"f"i"x" "a" "b"u"g" "o"f" "c"o"v"a"r"i"a"t"e"
+[master afcdd1f] fix a bug of covariate
+ Committer: June Lai <june@rorqual.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 8 files changed, 45 insertions(+), 12 deletions(-)
+ rewrite .Rproj.user/2591ECAF/console06/INDEX001 (85%)
+]0;~/Dropbox/YT_Lab/BY2Mrorqual:BY2M june$ git commit -m "fix a bug of covariate"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[K
