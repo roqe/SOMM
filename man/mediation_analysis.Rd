@@ -27,6 +27,9 @@ tru1_3=calc_true_value(para)
 dat2=sim_mediation_data(c(0,1),1000,para) #continous exposure
 res2_4=mediation_analysis(dat2, intv=4, nb=500)
 tru2_4=calc_true_value(para, intv=4)
+summary(eIVF) #subset eIVF data for demo
+res3_3=mediation_analysis(eIVF, confounders=c(log(36),log(26)))
+res3_4=mediation_analysis(eIVF, confounders=c(log(36),log(26)), intv=4)
 }
 \keyword{Causal}
 \keyword{Mediation}

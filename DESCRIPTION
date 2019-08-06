@@ -1,11 +1,12 @@
-Package: BY2M
+Package: SOMM
 Type: Package
-Title: A multi-mediator analysis for a binary non-rare outcome with sequentially ordered mediators
+Title: Mediation analysis for a binary non-rare outcome with Sequentially Ordered Multiple Mediators
 Version: 0.1.0
 Author: June Lai, Stephannie Shih
 Maintainer: June Lai <octopusjune@gmail.com>
 Description: This package provides a mediation analysis tool for a binary non-rare outcome Y with two sequentially ordered mediators.
-    We support two kinds of model: 3 intervention and 4 intervention. For detail, please refer to the paper of the same title above.
+    We support two kinds of model: 3 intervention and 4 intervention. For detail, please refer to the paper below:
+    A multi-mediator analysis for a binary non-rare outcome with sequentially ordered mediators, Statistics in Medicine, under revise.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
