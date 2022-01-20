@@ -18,6 +18,10 @@
 #' summary(eIVF) #subset eIVF data for demo
 #' res3_3=mediation_analysis(eIVF, confounders=c(log(36),log(26)))
 #' res3_4=mediation_analysis(eIVF, confounders=c(log(36),log(26)), intv=4)
+#' para_sg=c(rep(-0.5,3),rep(0,4),rep(-0.5,2),1,1) # for single mediator, set exposure-related parameters into 0
+#' dat_sg=sim_mediation_data(0.5,1000,para_sg)
+#' dat_sg$S=0 # set the second mediator into 0
+#' res_sg_3=mediation_analysis(dat_sg)
 
 mediation_analysis=function(dt,confounders=c(),nb=0,intv=3){
   dt=as.data.frame(dt)
@@ -25,12 +29,16 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3){
   y.reg=glm(Y~., family = binomial(link="probit"), data=dt)
   s.reg=lm(S~.-Y, data=dt)
   q.reg=lm(Q~.-S-Y, data=dt)
-  beta.hat=summary(y.reg)$coefficients[,1]
-  alpha.hat=summary(s.reg)$coefficients[,1]
-  delta.hat=summary(q.reg)$coefficients[,1]
+  beta.hat=y.reg$coefficients
+  alpha.hat=s.reg$coefficients
+  delta.hat=q.reg$coefficients
   ss.hat=sqrt(mean((s.reg$residuals)^2))
   sq.hat=sqrt(mean((q.reg$residuals)^2))
   V.matrix=create_vmatrix(y.reg,s.reg,q.reg)
+  if(sum(dt$S)==0){
+    beta.hat[is.na(beta.hat)]=0
+    V.matrix[is.na(V.matrix)]=0
+  }
   total.effect=summary(glm(Y~.-Q-S, family = binomial (link="probit"), data=dt))$coefficients[,1]
   total.rd=pnorm(sum(total.effect*c(1,1,confounders)))-pnorm(sum(total.effect*c(1,0,confounders))) #when S=1 compared to S=0
   total.rr=pnorm(sum(total.effect*c(1,1,confounders)))/pnorm(sum(total.effect*c(1,0,confounders)))

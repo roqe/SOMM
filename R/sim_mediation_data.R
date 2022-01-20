@@ -23,5 +23,5 @@ sim_mediation_data=function(exp,sample_size,SC){
   Q=rnorm(sample_size,SC[8]+SC[9]*W,SC[10])
   S=rnorm(sample_size,SC[5]+SC[6]*W+SC[7]*Q,SC[11])
   Y=ifelse(rnorm(sample_size,SC[1]+SC[2]*W+SC[3]*Q+SC[4]*S,1)<0,0,1)
-  return(cbind(Y,W,Q,S))
+  return(data.frame(Y=Y,W=W,Q=Q,S=S))
 }

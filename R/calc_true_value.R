@@ -9,6 +9,7 @@
 #' tru4=calc_true_value(para, intv=4)
 
 calc_true_value=function(SC,intv=3){
+  SC=list(beta=SC[1:4],alpha=SC[5:7],delta=SC[8:9],vq=SC[10],vs=SC[11])
   if(intv==3){
     PSEs=c(pse(SC,w1=c(1,0,0),w2=c(0,0,0)),
            pse(SC,w1=c(1,1,0),w2=c(1,0,0)),
