@@ -23,7 +23,13 @@
 #' dat_sg$S=0 # set the second mediator into 0
 #' res_sg_3=mediation_analysis(dat_sg)
 
-mediation_analysis=function(dt,confounders=c(),nb=0,intv=3){
+mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1){
+  if(unit=="IQR"){
+    QQ=quantile(dt$W,na.rm=T);
+    x0=QQ[[2]]; x1=QQ[[4]]
+  }else{
+    x0=0; x1=1
+  }
   colnames(dt)[1:4]=c("Y","W","Q","S")
   if(all(dt$Y%in%c(0,1))){
     y.reg=glm(Y~., family = binomial(link="probit"), data=dt)
@@ -44,8 +50,8 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3){
     beta.hat[is.na(beta.hat)]=0
     V.matrix[is.na(V.matrix)]=0
   }
-  o11=pnorm(sum(total.effect*c(1,1,confounders)))
-  o10=pnorm(sum(total.effect*c(1,0,confounders)))
+  o11=pnorm(sum(total.effect*c(x1,x1,confounders)))
+  o10=pnorm(sum(total.effect*c(x1,x0,confounders)))
   total.rd=o11-o10 #when S=1 compared to S=0
   total.rr=o11/o10
   total.or=(o11/(1-o11))/(o10/(1-o10))
@@ -54,18 +60,18 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3){
   if(nb>0){
     var.boot=create_var_boot(nb, dt, confounders=confounders, intv=intv)
     total=dim(var.boot)[1]
-    bsRD1=bss(1,F);bsRD2=bss(2,F);bsRD3=bss(3,F)
-    bsRR1=bss(4,T);bsRR2=bss(5,T);bsRR3=bss(6,T)
-    bsOR1=bss(7,T);bsOR2=bss(8,T);bsOR3=bss(9,T)
+    bsRD1=bss(1,var.boot,F);bsRD2=bss(2,var.boot,F);bsRD3=bss(3,var.boot,F)
+    bsRR1=bss(4,var.boot,T);bsRR2=bss(5,var.boot,T);bsRR3=bss(6,var.boot,T)
+    bsOR1=bss(7,var.boot,T);bsOR2=bss(8,var.boot,T);bsOR3=bss(9,var.boot,T)
     bdnp=c("lower(a)","upper(a)","pv(a)","lower(b)","upper(b)","pv(b)")
   }
 
   theta_hat=list(beta.hat, alpha.hat, delta.hat, sq.hat, ss.hat)
   if(intv==3){
-    p000=omega(theta_hat, c(0,0,0), confounders)
-    p100=omega(theta_hat, c(1,0,0), confounders) #first part of difference
-    p110=omega(theta_hat, c(1,1,0), confounders) #first part of difference
-    p111=omega(theta_hat, c(1,1,1), confounders) #first part of difference
+    p000=omega(theta_hat, c(x0,x0,x0), confounders)
+    p100=omega(theta_hat, c(x1,x0,x0), confounders) #first part of difference
+    p110=omega(theta_hat, c(x1,x1,x0), confounders) #first part of difference
+    p111=omega(theta_hat, c(x1,x1,x1), confounders) #first part of difference
     omega_values=c(p000[1],p100[1],p110[1],p111[1],total.rd,total.rr,total.or)
     names(omega_values)=c("p000","p100","p110","p111","total RD","total RR","total OR")
     RD1=rd(p100,p000,V.matrix)
@@ -88,11 +94,11 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3){
                         "RR W>Y",bdnp,"RR W>S>Y",bdnp,"RR W>QY",bdnp,
                         "OR W>Y",bdnp,"OR W>S>Y",bdnp,"OR W>QY",bdnp)
   }else if(intv==4){
-    p0000=omega(theta_hat, c(0,0,0,0), confounders)
-    p1000=omega(theta_hat, c(1,0,0,0), confounders) #first part of difference
-    p1100=omega(theta_hat, c(1,1,0,0), confounders) #first part of difference
-    p1110=omega(theta_hat, c(1,1,1,0), confounders) #first part of difference
-    p1111=omega(theta_hat, c(1,1,1,1), confounders) #first part of difference
+    p0000=omega(theta_hat, c(x0,x0,x0,x0), confounders)
+    p1000=omega(theta_hat, c(x1,x0,x0,x0), confounders) #first part of difference
+    p1100=omega(theta_hat, c(x1,x1,x0,x0), confounders) #first part of difference
+    p1110=omega(theta_hat, c(x1,x1,x1,x0), confounders) #first part of difference
+    p1111=omega(theta_hat, c(x1,x1,x1,x1), confounders) #first part of difference
     omega_values=c(p0000[1],p1000[1],p1100[1],p1110[1],p1111[1],total.rd,total.rr,total.or)
     names(omega_values)=c("p0000","p1000","p1100","p1110","p1111","total RD","total RR","total OR")
     RD1=rd(p1000,p0000,V.matrix)
@@ -108,7 +114,7 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3){
     OR3=rr(p1110/(1-p1110),p1100/(1-p1100),V.matrix)
     OR4=rr(p1111/(1-p1111),p1110/(1-p1110),V.matrix)
     if(nb>0){
-      bsRD4=bss(10,F); bsRR4=bss(11,T); bsOR4=bss(12,T)
+      bsRD4=bss(10,var.boot,F); bsRR4=bss(11,var.boot,T); bsOR4=bss(12,var.boot,T)
       pse_values=c(RD1,unlist(bsRD1),RD2,unlist(bsRD2),RD3,unlist(bsRD3),RD4,unlist(bsRD4),
                    RR1,unlist(bsRR1),RR2,unlist(bsRR2),RR3,unlist(bsRR3),RR4,unlist(bsRR4),
                    OR1,unlist(bsOR1),OR2,unlist(bsOR2),OR3,unlist(bsOR3),OR4,unlist(bsOR4))

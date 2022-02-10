@@ -1,4 +1,4 @@
-bss=function(ind,log_scale=T){
+bss=function(ind,var.boot,log_scale=T){
   bb=c(quantile(var.boot[,ind], probs=c(0.025, 0.975)))
   if(log_scale){
     vv=sum(log(var.boot[,ind])>0)/total
