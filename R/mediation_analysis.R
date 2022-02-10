@@ -50,8 +50,8 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1){
     beta.hat[is.na(beta.hat)]=0
     V.matrix[is.na(V.matrix)]=0
   }
-  o11=pnorm(sum(total.effect*c(x1,x1,confounders)))
-  o10=pnorm(sum(total.effect*c(x1,x0,confounders)))
+  o11=pnorm(sum(total.effect*c(1,x1,confounders)))
+  o10=pnorm(sum(total.effect*c(1,x0,confounders)))
   total.rd=o11-o10 #when S=1 compared to S=0
   total.rr=o11/o10
   total.or=(o11/(1-o11))/(o10/(1-o10))
@@ -59,7 +59,6 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1){
 
   if(nb>0){
     var.boot=create_var_boot(nb, dt, confounders=confounders, intv=intv)
-    total=dim(var.boot)[1]
     bsRD1=bss(1,var.boot,F);bsRD2=bss(2,var.boot,F);bsRD3=bss(3,var.boot,F)
     bsRR1=bss(4,var.boot,T);bsRR2=bss(5,var.boot,T);bsRR3=bss(6,var.boot,T)
     bsOR1=bss(7,var.boot,T);bsOR2=bss(8,var.boot,T);bsOR3=bss(9,var.boot,T)
