@@ -4,14 +4,7 @@
 \alias{mediation_analysis}
 \title{Apply mediation analysis for non-rare binary outcome with two continuous mediators}
 \usage{
-mediation_analysis(
-  dt,
-  confounders = c(),
-  nb = 0,
-  intv = 3,
-  unit = 1,
-  reNAME = NULL
-)
+mediation_analysis(dt, confounders = c(), nb = 0, intv = 3, unit = 1)
 }
 \arguments{
 \item{dt}{Input data.}

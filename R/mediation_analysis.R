@@ -5,6 +5,7 @@
 #' @param nb Number of bootstrapping. Default is 0 (no bootstrapping applied).
 #' @param intv Number of intervention, 3 or 4. Default is 3.
 #' @keywords Mediation analysis, Causal inference.
+#' @import data.table lme4
 #' @export
 #' @examples
 #' para=c(rep(-0.5,9),1,1)
@@ -23,106 +24,57 @@
 #' dat_sg$S=0 # set the second mediator into 0
 #' res_sg_3=mediation_analysis(dat_sg)
 
-mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1){
+mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL){
+  colnames(dt)[1:4]=c("Y","W","Q","S")
+  colnames(dt)[colnames(dt)==reNAME]="id"
   if(unit=="IQR"){
     QQ=quantile(dt$W,na.rm=T);
     x0=QQ[[2]]; x1=QQ[[4]]
   }else{
     x0=0; x1=1
   }
-  colnames(dt)[1:4]=c("Y","W","Q","S")
-  if(all(dt$Y%in%c(0,1))){
-    y.reg=glm(Y~., family = binomial(link="probit"), data=dt)
-    total.effect=summary(glm(Y~.-Q-S, family = binomial (link="probit"), data=dt))$coefficients[,1]
-  }else{
-    y.reg=glm(Y~., family = gaussian, data=dt)
-    total.effect=summary(glm(Y~.-Q-S, data=dt))$coefficients[,1]
-  }
-  s.reg=lm(S~.-Y, data=dt)
-  q.reg=lm(Q~.-S-Y, data=dt)
-  beta.hat=y.reg$coefficients
-  alpha.hat=s.reg$coefficients
-  delta.hat=q.reg$coefficients
-  ss.hat=sqrt(mean((s.reg$residuals)^2))
-  sq.hat=sqrt(mean((q.reg$residuals)^2))
-  V.matrix=create_vmatrix(y.reg,s.reg,q.reg)
+  GT=get_theta(dt,reNAME)
+  o11=pnorm(sum(GT$total*c(1,x1,confounders)))
+  o10=pnorm(sum(GT$total*c(1,x0,confounders)))
+  bdnp=c("lower(a)","upper(a)","pv(a)")
+  V.matrix=create_vmatrix(GT)
   if(sum(dt$S,na.rm = T)==0){
-    beta.hat[is.na(beta.hat)]=0
+    GT$theta_hat$bc[is.na(GT$theta_hat$bc)]=0
     V.matrix[is.na(V.matrix)]=0
   }
-  o11=pnorm(sum(total.effect*c(1,x1,confounders)))
-  o10=pnorm(sum(total.effect*c(1,x0,confounders)))
-  total.rd=o11-o10 #when S=1 compared to S=0
-  total.rr=o11/o10
-  total.or=(o11/(1-o11))/(o10/(1-o10))
-  bdnp=c("lower(a)","upper(a)","pv(a)")
 
   if(nb>0){
-    var.boot=create_var_boot(nb, dt, confounders=confounders, intv=intv)
+    var.boot=create_var_boot(nb, dt, confounders=confounders, intv=intv, reNAME=reNAME, x0, x1)
     bsRD1=bss(1,var.boot,F);bsRD2=bss(2,var.boot,F);bsRD3=bss(3,var.boot,F)
     bsRR1=bss(4,var.boot,T);bsRR2=bss(5,var.boot,T);bsRR3=bss(6,var.boot,T)
     bsOR1=bss(7,var.boot,T);bsOR2=bss(8,var.boot,T);bsOR3=bss(9,var.boot,T)
-    bdnp=c("lower(a)","upper(a)","pv(a)","lower(b)","upper(b)","pv(b)")
+    bdnp=c(bdnp,"lower(b)","upper(b)","pv(b)")
   }
 
-  theta_hat=list(beta.hat, alpha.hat, delta.hat, sq.hat, ss.hat)
   if(intv==3){
-    p000=omega(theta_hat, c(x0,x0,x0), confounders)
-    p100=omega(theta_hat, c(x1,x0,x0), confounders) #first part of difference
-    p110=omega(theta_hat, c(x1,x1,x0), confounders) #first part of difference
-    p111=omega(theta_hat, c(x1,x1,x1), confounders) #first part of difference
-    omega_values=c(p000[1],p100[1],p110[1],p111[1],total.rd,total.rr,total.or)
-    names(omega_values)=c("p000","p100","p110","p111","total RD","total RR","total OR")
-    RD1=rd(p100,p000,V.matrix)
-    RD2=rd(p110,p100,V.matrix)
-    RD3=rd(p111,p110,V.matrix)
-    RR1=rr(p100,p000,V.matrix)
-    RR2=rr(p110,p100,V.matrix)
-    RR3=rr(p111,p110,V.matrix)
-    OR1=rr(p100/(1-p100),p000/(1-p000),V.matrix)
-    OR2=rr(p110/(1-p110),p100/(1-p100),V.matrix)
-    OR3=rr(p111/(1-p111),p110/(1-p110),V.matrix)
+    PP=PSE_three(GT,x0,x1,confounders,V.matrix)
+    psel=c("W>Y","W>S>Y","W>QY")
+    pse_values=data.table::data.table(stat=c(rep("RD",3),rep("RR",3),rep("OR",3)),
+                                      path=rep(psel,3),rbind(PP$RD,PP$RR,PP$OR))
     if(nb>0){
-      pse_values=c(RD1,unlist(bsRD1),RD2,unlist(bsRD2),RD3,unlist(bsRD3),
-                   RR1,unlist(bsRR1),RR2,unlist(bsRR2),RR3,unlist(bsRR3),
-                   OR1,unlist(bsOR1),OR2,unlist(bsOR2),OR3,unlist(bsOR3))
-    }else{
-      pse_values=c(RD1,RD2,RD3,RR1,RR2,RR3,OR1,OR2,OR3)
+      pse_values=cbind(pse_values,
+        rbind(unlist(bsRD1),unlist(bsRD2),unlist(bsRD3),
+              unlist(bsRR1),unlist(bsRR2),unlist(bsRR3),
+              unlist(bsOR1),unlist(bsOR2),unlist(bsOR3)))
     }
-    names(pse_values)=c("RD W>Y",bdnp,"RD W>S>Y",bdnp,"RD W>QY",bdnp,
-                        "RR W>Y",bdnp,"RR W>S>Y",bdnp,"RR W>QY",bdnp,
-                        "OR W>Y",bdnp,"OR W>S>Y",bdnp,"OR W>QY",bdnp)
   }else if(intv==4){
-    p0000=omega(theta_hat, c(x0,x0,x0,x0), confounders)
-    p1000=omega(theta_hat, c(x1,x0,x0,x0), confounders) #first part of difference
-    p1100=omega(theta_hat, c(x1,x1,x0,x0), confounders) #first part of difference
-    p1110=omega(theta_hat, c(x1,x1,x1,x0), confounders) #first part of difference
-    p1111=omega(theta_hat, c(x1,x1,x1,x1), confounders) #first part of difference
-    omega_values=c(p0000[1],p1000[1],p1100[1],p1110[1],p1111[1],total.rd,total.rr,total.or)
-    names(omega_values)=c("p0000","p1000","p1100","p1110","p1111","total RD","total RR","total OR")
-    RD1=rd(p1000,p0000,V.matrix)
-    RD2=rd(p1100,p1000,V.matrix)
-    RD3=rd(p1110,p1100,V.matrix)
-    RD4=rd(p1111,p1110,V.matrix)
-    RR1=rr(p1000,p0000,V.matrix)
-    RR2=rr(p1100,p1000,V.matrix)
-    RR3=rr(p1110,p1100,V.matrix)
-    RR4=rr(p1111,p1110,V.matrix)
-    OR1=rr(p1000/(1-p1000),p0000/(1-p0000),V.matrix)
-    OR2=rr(p1100/(1-p1100),p1000/(1-p1000),V.matrix)
-    OR3=rr(p1110/(1-p1110),p1100/(1-p1100),V.matrix)
-    OR4=rr(p1111/(1-p1111),p1110/(1-p1110),V.matrix)
+    PP=PSE_four(GT,x0,x1,confounders,V.matrix)
+    psel=c("W>Y","W>S>Y","W>Q>Y","W>Q>S>Y")
+    pse_values=data.table::data.table(stat=c(rep("RD",4),rep("RR",4),rep("OR",4)),
+                                      path=rep(psel,3),rbind(PP$RD,PP$RR,PP$OR))
     if(nb>0){
       bsRD4=bss(10,var.boot,F); bsRR4=bss(11,var.boot,T); bsOR4=bss(12,var.boot,T)
-      pse_values=c(RD1,unlist(bsRD1),RD2,unlist(bsRD2),RD3,unlist(bsRD3),RD4,unlist(bsRD4),
-                   RR1,unlist(bsRR1),RR2,unlist(bsRR2),RR3,unlist(bsRR3),RR4,unlist(bsRR4),
-                   OR1,unlist(bsOR1),OR2,unlist(bsOR2),OR3,unlist(bsOR3),OR4,unlist(bsOR4))
-    }else{
-      pse_values=c(RD1,RD2,RD3,RD4,RR1,RR2,RR3,RR4,OR1,OR2,OR3,OR4)
+      pse_values=cbind(pse_values,
+        rbind(unlist(bsRD1),unlist(bsRD2),unlist(bsRD3),unlist(bsRD4),
+              unlist(bsRR1),unlist(bsRR2),unlist(bsRR3),unlist(bsRR4),
+              unlist(bsOR1),unlist(bsOR2),unlist(bsOR3),unlist(bsOR4)))
     }
-    names(pse_values)=c("RD W>Y",bdnp,"RD W>S>Y",bdnp,"RD W>Q>Y",bdnp,"RD W>Q>S>Y",bdnp,
-                        "RR W>Y",bdnp,"RR W>S>Y",bdnp,"RR W>Q>Y",bdnp,"RR W>Q>S>Y",bdnp,
-                        "OR W>Y",bdnp,"OR W>S>Y",bdnp,"OR W>Q>Y",bdnp,"OR W>Q>S>Y",bdnp)
   }
-  return(c(omega_values,pse_values))
+  colnames(pse_values)[3:ncol(pse_values)]=c("effect",bdnp)
+  return(list(DAG=PP$omega,TOTAL=data.table(RD=o11-o10,RR=o11/o10,OR=(o11/(1-o11))/(o10/(1-o10))),PSE=pse_values))
 }

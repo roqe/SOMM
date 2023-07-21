@@ -1,20 +1,14 @@
 omega=function(SC,w,confounders=c()){
-  b0=SC[[1]][1]
-  bw=SC[[1]][2]
-  bq=SC[[1]][3]
-  bs=SC[[1]][4]
-  a0=SC[[2]][1]
-  aw=SC[[2]][2]
-  aq=SC[[2]][3]
-  d0=SC[[3]][1]
-  dw=SC[[3]][2]
-  sq=SC[[4]]
-  ss=SC[[5]]
-  bl=length(SC[[1]])
+  b0=SC$bc[["(Intercept)"]]; bw=SC$bc[["W"]]; bq=SC$bc[["Q"]]; bs=SC$bc[["S"]]
+  a0=SC$ac[["(Intercept)"]]; aw=SC$ac[["W"]]; aq=SC$ac[["Q"]]
+  d0=SC$dc[["(Intercept)"]]; dw=SC$dc[["W"]]
+  sq=SC$sq
+  ss=SC$ss
+  bl=length(SC$bc)
   if(bl>4){
-    bX=SC[[1]][5:bl]
-    aX=SC[[2]][4:(bl-1)]
-    dX=SC[[3]][3:(bl-2)]
+    bX=SC$bc[5:bl]
+    aX=SC$ac[4:(bl-1)]
+    dX=SC$dc[3:(bl-2)]
   }else{ bX=aX=dX=0 }
   mu.q=d0+dw*w[3]+sum(dX*confounders)
   if(length(w)==3){
