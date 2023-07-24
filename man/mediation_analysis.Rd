@@ -10,7 +10,9 @@ mediation_analysis(
   nb = 0,
   intv = 3,
   unit = 1,
-  reNAME = NULL
+  reNAME = NULL,
+  mc = 5,
+  autoR = T
 )
 }
 \arguments{

@@ -5,7 +5,7 @@
 #' @param nb Number of bootstrapping. Default is 0 (no bootstrapping applied).
 #' @param intv Number of intervention, 3 or 4. Default is 3.
 #' @keywords Mediation analysis, Causal inference.
-#' @import data.table lme4
+#' @import data.table lme4 foreach snow doSNOW
 #' @export
 #' @examples
 #' para=c(rep(-0.5,9),1,1)
@@ -24,7 +24,7 @@
 #' dat_sg$S=0 # set the second mediator into 0
 #' res_sg_3=mediation_analysis(dat_sg)
 
-mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL){
+mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL,mc=5,autoR=T){
   colnames(dt)[1:4]=c("Y","W","Q","S")
   colnames(dt)[colnames(dt)==reNAME]="id"
   if(unit=="IQR"){
@@ -44,7 +44,14 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL){
   }
 
   if(nb>0){
-    var.boot=create_var_boot(nb, dt, confounders=confounders, intv=intv, reNAME=reNAME, x0, x1)
+    cl = snow::makeCluster(mc)
+    doSNOW::registerDoSNOW(cl)
+    pb = txtProgressBar(max = nb, style = 3)
+    progress = function(n) setTxtProgressBar(pb, n)
+    opts = list(progress = progress)
+    var.boot=data.table::rbindlist(foreach::foreach(boot.count=1:nb, .options.snow = opts) %dopar% {
+      create_var_boot(nb, dt, confounders=confounders, intv=4, reNAME=reNAME, x0, x1) })
+
     bsRD1=bss(1,var.boot,F);bsRD2=bss(2,var.boot,F);bsRD3=bss(3,var.boot,F)
     bsRR1=bss(4,var.boot,T);bsRR2=bss(5,var.boot,T);bsRR3=bss(6,var.boot,T)
     bsOR1=bss(7,var.boot,T);bsOR2=bss(8,var.boot,T);bsOR3=bss(9,var.boot,T)
@@ -76,5 +83,6 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL){
     }
   }
   colnames(pse_values)[3:ncol(pse_values)]=c("effect",bdnp)
+  if(autoR){ pse_values=pse_values[complete.cases(pse_values)] }
   return(list(DAG=PP$omega,TOTAL=data.table(RD=o11-o10,RR=o11/o10,OR=(o11/(1-o11))/(o10/(1-o10))),PSE=pse_values))
 }
