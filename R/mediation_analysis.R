@@ -50,39 +50,40 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL,mc
     progress = function(n) setTxtProgressBar(pb, n)
     opts = list(progress = progress)
     var.boot=data.table::rbindlist(foreach::foreach(boot.count=1:nb, .options.snow = opts) %dopar% {
-      create_var_boot(nb, dt, confounders=confounders, intv=4, reNAME=reNAME, x0, x1) })
+      create_var_boot(nb, dt, confounders=confounders, intv=intv, reNAME=reNAME, x0, x1) })
 
     bsRD1=bss(1,var.boot,F);bsRD2=bss(2,var.boot,F);bsRD3=bss(3,var.boot,F)
     bsRR1=bss(4,var.boot,T);bsRR2=bss(5,var.boot,T);bsRR3=bss(6,var.boot,T)
     bsOR1=bss(7,var.boot,T);bsOR2=bss(8,var.boot,T);bsOR3=bss(9,var.boot,T)
+    bsRD4=bss(10,var.boot,F);bsRR4=bss(11,var.boot,T);bsOR4=bss(12,var.boot,T)
+    bsRDT=bss(13,var.boot,F);bsRRT=bss(14,var.boot,T);bsORT=bss(15,var.boot,T)
     bdnp=c(bdnp,"lower(b)","upper(b)","pv(b)")
   }
 
   if(intv==3){
     PP=PSE_three(GT,x0,x1,confounders,V.matrix)
-    psel=c("W>Y","W>S>Y","W>QY")
-    pse_values=data.table::data.table(stat=c(rep("RD",3),rep("RR",3),rep("OR",3)),
-                                      path=rep(psel,3),rbind(PP$RD,PP$RR,PP$OR))
-    if(nb>0){
-      pse_values=cbind(pse_values,
-        rbind(unlist(bsRD1),unlist(bsRD2),unlist(bsRD3),
-              unlist(bsRR1),unlist(bsRR2),unlist(bsRR3),
-              unlist(bsOR1),unlist(bsOR2),unlist(bsOR3)))
-    }
-  }else if(intv==4){
-    PP=PSE_four(GT,x0,x1,confounders,V.matrix)
-    psel=c("W>Y","W>S>Y","W>Q>Y","W>Q>S>Y")
+    psel=c("W>Y","W>S>Y","W>QY","total")
     pse_values=data.table::data.table(stat=c(rep("RD",4),rep("RR",4),rep("OR",4)),
                                       path=rep(psel,3),rbind(PP$RD,PP$RR,PP$OR))
     if(nb>0){
-      bsRD4=bss(10,var.boot,F); bsRR4=bss(11,var.boot,T); bsOR4=bss(12,var.boot,T)
       pse_values=cbind(pse_values,
-        rbind(unlist(bsRD1),unlist(bsRD2),unlist(bsRD3),unlist(bsRD4),
-              unlist(bsRR1),unlist(bsRR2),unlist(bsRR3),unlist(bsRR4),
-              unlist(bsOR1),unlist(bsOR2),unlist(bsOR3),unlist(bsOR4)))
+        rbind(unlist(bsRD1),unlist(bsRD2),unlist(bsRD3),unlist(bsRDT),
+              unlist(bsRR1),unlist(bsRR2),unlist(bsRR3),unlist(bsRRT),
+              unlist(bsOR1),unlist(bsOR2),unlist(bsOR3),unlist(bsORT)))
+    }
+  }else if(intv==4){
+    PP=PSE_four(GT,x0,x1,confounders,V.matrix)
+    psel=c("W>Y","W>S>Y","W>Q>Y","W>Q>S>Y","total")
+    pse_values=data.table::data.table(stat=c(rep("RD",5),rep("RR",5),rep("OR",5)),
+                                      path=rep(psel,3),rbind(PP$RD,PP$RR,PP$OR))
+    if(nb>0){
+      pse_values=cbind(pse_values,
+        rbind(unlist(bsRD1),unlist(bsRD2),unlist(bsRD3),unlist(bsRD4),unlist(bsRDT),
+              unlist(bsRR1),unlist(bsRR2),unlist(bsRR3),unlist(bsRR4),unlist(bsRRT),
+              unlist(bsOR1),unlist(bsOR2),unlist(bsOR3),unlist(bsOR4),unlist(bsORT)))
     }
   }
   colnames(pse_values)[3:ncol(pse_values)]=c("effect",bdnp)
   if(autoR){ pse_values=pse_values[complete.cases(pse_values)] }
-  return(list(DAG=PP$omega,TOTAL=data.table(RD=o11-o10,RR=o11/o10,OR=(o11/(1-o11))/(o10/(1-o10))),PSE=pse_values))
+  return(list(TOTAL=data.table(RD=o11-o10,RR=o11/o10,OR=(o11/(1-o11))/(o10/(1-o10))),DAG=PP$omega,PSE=pse_values))
 }
