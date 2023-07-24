@@ -2,11 +2,12 @@
 create_var_boot=function(nb, dt, confounders=c(), intv=3, reNAME=NULL, x0, x1){
     dt.boot=as.data.frame(dt[sample(1:nrow(dt), replace=TRUE),])
     GT=get_theta(dt.boot,reNAME)
+    BF=(summary(GT$reg$y.reg)$family$family=="binomial")
     if(intv==3){
-      p000=omega(GT$theta_hat, c(x0,x0,x0), confounders)
-      p100=omega(GT$theta_hat, c(x1,x0,x0), confounders)
-      p110=omega(GT$theta_hat, c(x1,x1,x0), confounders)
-      p111=omega(GT$theta_hat, c(x1,x1,x1), confounders)
+      p000=omega(GT$theta_hat, c(x0,x0,x0), confounders, BF)
+      p100=omega(GT$theta_hat, c(x1,x0,x0), confounders, BF)
+      p110=omega(GT$theta_hat, c(x1,x1,x0), confounders, BF)
+      p111=omega(GT$theta_hat, c(x1,x1,x1), confounders, BF)
       RD1=p100[1]-p000[1]
       RD2=p110[1]-p100[1]
       RD3=p111[1]-p110[1]
@@ -21,11 +22,11 @@ create_var_boot=function(nb, dt, confounders=c(), intv=3, reNAME=NULL, x0, x1){
       ORT=(p111[1]/(1-p111[1]))/(p000[1]/(1-p000[1]))
       return(list(RD1,RD2,RD3,RR1,RR2,RR3,OR1,OR2,OR3,NA,NA,NA,RDT,RRT,ORT))
     }else if(intv==4){
-      p0000=omega(GT$theta_hat, c(x0,x0,x0,x0), confounders)
-      p1000=omega(GT$theta_hat, c(x1,x0,x0,x0), confounders) #first part of difference
-      p1100=omega(GT$theta_hat, c(x1,x1,x0,x0), confounders) #first part of difference
-      p1110=omega(GT$theta_hat, c(x1,x1,x1,x0), confounders) #first part of difference
-      p1111=omega(GT$theta_hat, c(x1,x1,x1,x1), confounders) #first part of difference
+      p0000=omega(GT$theta_hat, c(x0,x0,x0,x0), confounders, BF)
+      p1000=omega(GT$theta_hat, c(x1,x0,x0,x0), confounders, BF) #first part of difference
+      p1100=omega(GT$theta_hat, c(x1,x1,x0,x0), confounders, BF) #first part of difference
+      p1110=omega(GT$theta_hat, c(x1,x1,x1,x0), confounders, BF) #first part of difference
+      p1111=omega(GT$theta_hat, c(x1,x1,x1,x1), confounders, BF) #first part of difference
       RD1=p1000[1]-p0000[1]
       RD2=p1100[1]-p1000[1]
       RD3=p1110[1]-p1100[1]
