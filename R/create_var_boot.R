@@ -2,7 +2,7 @@
 create_var_boot=function(nb, dt, confounders=c(), intv=3, reNAME=NULL, x0, x1){
     dt.boot=as.data.frame(dt[sample(1:nrow(dt), replace=TRUE),])
     GT=get_theta(dt.boot,reNAME)
-    BF=(summary(GT$reg$y.reg)$family$family=="binomial")
+    BF=(summary(GT$reg$y.reg)$family=="binomial")
     if(intv==3){
       p000=omega(GT$theta_hat, c(x0,x0,x0), confounders, BF)
       p100=omega(GT$theta_hat, c(x1,x0,x0), confounders, BF)

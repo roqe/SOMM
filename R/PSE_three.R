@@ -1,6 +1,6 @@
 #' @import data.table
 PSE_three=function(GT,x0,x1,confounders,V.matrix){
-  BF=(summary(GT$reg$y.reg)$family$family=="binomial")
+  BF=(summary(GT$reg$y.reg)$family[[1]]=="binomial")
   p000=omega(GT$theta_hat, c(x0,x0,x0), confounders, BF)
   p100=omega(GT$theta_hat, c(x1,x0,x0), confounders, BF)
   p110=omega(GT$theta_hat, c(x1,x1,x0), confounders, BF)

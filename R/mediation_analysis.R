@@ -55,7 +55,6 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL,mc
     bsRD1=bss(1,var.boot,F);bsRD2=bss(2,var.boot,F);bsRD3=bss(3,var.boot,F)
     bsRR1=bss(4,var.boot,T);bsRR2=bss(5,var.boot,T);bsRR3=bss(6,var.boot,T)
     bsOR1=bss(7,var.boot,T);bsOR2=bss(8,var.boot,T);bsOR3=bss(9,var.boot,T)
-    bsRD4=bss(10,var.boot,F);bsRR4=bss(11,var.boot,T);bsOR4=bss(12,var.boot,T)
     bsRDT=bss(13,var.boot,F);bsRRT=bss(14,var.boot,T);bsORT=bss(15,var.boot,T)
     bdnp=c(bdnp,"lower(b)","upper(b)","pv(b)")
   }
@@ -77,6 +76,7 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL,mc
     pse_values=data.table::data.table(stat=c(rep("RD",5),rep("RR",5),rep("OR",5)),
                                       path=rep(psel,3),rbind(PP$RD,PP$RR,PP$OR))
     if(nb>0){
+      bsRD4=bss(10,var.boot,F);bsRR4=bss(11,var.boot,T);bsOR4=bss(12,var.boot,T)
       pse_values=cbind(pse_values,
         rbind(unlist(bsRD1),unlist(bsRD2),unlist(bsRD3),unlist(bsRD4),unlist(bsRDT),
               unlist(bsRR1),unlist(bsRR2),unlist(bsRR3),unlist(bsRR4),unlist(bsRRT),
