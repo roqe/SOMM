@@ -12,7 +12,9 @@ mediation_analysis(
   unit = 1,
   reNAME = NULL,
   mc = 5,
-  autoR = T
+  autoR = T,
+  stra = 1,
+  seed = 217
 )
 }
 \arguments{

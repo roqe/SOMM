@@ -24,7 +24,7 @@
 #' dat_sg$S=0 # set the second mediator into 0
 #' res_sg_3=mediation_analysis(dat_sg)
 
-mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL,mc=5,autoR=T){
+mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL,mc=5,autoR=T,stra=1,seed=217){
   colnames(dt)[1:4]=c("Y","W","Q","S")
   colnames(dt)[colnames(dt)==reNAME]="id"
   if(unit=="IQR"){
@@ -50,8 +50,10 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL,mc
     progress = function(n) setTxtProgressBar(pb, n)
     opts = list(progress = progress)
     var.boot=data.table::rbindlist(foreach::foreach(boot.count=1:nb, .options.snow = opts) %dopar% {
-      create_var_boot(nb, dt, confounders=confounders, intv=intv, reNAME=reNAME, x0, x1) })
+      set.seed(seed*boot.count)
+      create_var_boot(nb, dt, confounders=confounders, intv=intv, reNAME=reNAME, x0, x1, stra) })
 
+    set.seed(seed)
     bsRD1=bss(1,var.boot,F);bsRD2=bss(2,var.boot,F);bsRD3=bss(3,var.boot,F)
     bsRR1=bss(4,var.boot,T);bsRR2=bss(5,var.boot,T);bsRR3=bss(6,var.boot,T)
     bsOR1=bss(7,var.boot,T);bsOR2=bss(8,var.boot,T);bsOR3=bss(9,var.boot,T)

@@ -1,6 +1,31 @@
 #' @import foreach
-create_var_boot=function(nb, dt, confounders=c(), intv=3, reNAME=NULL, x0, x1){
+create_var_boot=function(nb, dt, confounders=c(), intv=3, reNAME=NULL, x0, x1, stra=1){
+  if(stra>1){
+    dt.BB=c()
+    for (i in 1:stra){
+      dt.Q=dt[dt$Q<=i & dt$Q>(i-1),]
+      dt.B=c()
+      for (j in 1:stra){
+        w_range=which(dt.Q$W<=j & dt.Q$W>(j-1))
+        dt.b=as.data.frame(dt.Q[w_range,][sample(1:sum(w_range), replace=T),])
+        dt.B=rbind(dt.B, dt.b)
+      }
+      dt.BB=rbind(dt.BB,dt.B)
+    }
+    if (!is.null(reNAME)) {
+      dt.BB=dt.BB[-is.na(dt.BB$id),]
+      a=table(dt.BB$id)
+      dt.boot=c()
+      for (AA in min(a):max(a)){
+        b=dt[which(dt$id %in% names(which(a>=AA))),]
+        dt.boot=rbind(dt.boot,b)
+      }
+    }
+    if (is.null(reNAME)) dt.boot=dt.BB[!is.na(dt.BB$Y),]
+  }else{
     dt.boot=as.data.frame(dt[sample(1:nrow(dt), replace=TRUE),])
+  }
+
     GT=get_theta(dt.boot,reNAME)
     BF=(summary(GT$reg$y.reg)$family=="binomial")
     if(intv==3){
