@@ -1,7 +1,7 @@
 #' @import data.table lme4
 #' @export
 get_theta=function(dt,reNAME){
-  covnames=colnames(dt)[!colnames(dt)%in%c("Y","W","Q","S","id")]
+
   if(is.null(reNAME)){
     if(all(dt$Y%in%c(0,1))){
       y.reg=glm(Y~., family = binomial(link="probit"), data=dt)
@@ -13,6 +13,7 @@ get_theta=function(dt,reNAME){
     s.reg=lm(S~.-Y, data=dt)
     q.reg=lm(Q~.-S-Y, data=dt)
   }else{
+    covnames=colnames(dt)[!colnames(dt)%in%c("Y","W","Q","S","id")]
     if(all(dt$Y%in%c(0,1))){
       y.reg=lme4::glmer(as.formula(paste0("Y~W+Q+S+(1|id)+",paste0(covnames,collapse = "+"))), family=binomial(link="probit"), data=dt)
       total.effect=summary(lme4::glmer(as.formula(paste0("Y~W+(1|id)+",paste0(covnames,collapse = "+"))), family = binomial(link="probit"), data=dt))$coef[,1]
