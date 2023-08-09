@@ -25,6 +25,7 @@ get_theta=function(dt,reNAME){
   }
 
   yc=data.table::data.table(t(summary(y.reg)$coef[,1]))
+  covnames=names(yc)[which(!names(yc)%in%c("(Intercept)","Y","W","Q","S","id"))]
   beta.hat=cbind(data.table::data.table(yc[1,1:3],S=ifelse("S"%in%names(yc),yc[["S"]],0),yc[1,..covnames]))
   if("S"%in%names(yc)){
     alpha.hat=summary(s.reg)$coef[,1]
