@@ -5,7 +5,7 @@
 #' @param nb Number of bootstrapping. Default is 0 (no bootstrapping applied).
 #' @param intv Number of intervention, 3 or 4. Default is 3.
 #' @keywords Mediation analysis, Causal inference.
-#' @import data.table lme4 foreach snow doSNOW
+#' @import data.table lme4 foreach snow doSNOW parallel doParallel
 #' @export
 #' @examples
 #' para=c(rep(-0.5,9),1,1)
@@ -52,6 +52,7 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL,mc
     var.boot=data.table::rbindlist(foreach::foreach(boot.count=1:nb, .options.snow = opts) %dopar% {
       set.seed(seed*boot.count)
       create_var_boot(nb, dt, confounders=confounders, intv=intv, reNAME=reNAME, x0, x1, stra) })
+    stopCluster(cl)
 
     set.seed(seed)
     bsRD1=bss(1,var.boot,F);bsRD2=bss(2,var.boot,F);bsRD3=bss(3,var.boot,F)
