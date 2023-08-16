@@ -33,40 +33,30 @@ create_var_boot=function(nb, dt, confounders=c(), intv=3, reNAME=NULL, x0, x1, s
       p100=omega(GT$theta_hat, c(x1,x0,x0), confounders, BF)
       p110=omega(GT$theta_hat, c(x1,x1,x0), confounders, BF)
       p111=omega(GT$theta_hat, c(x1,x1,x1), confounders, BF)
-      RD1=p100[1]-p000[1]
-      RD2=p110[1]-p100[1]
-      RD3=p111[1]-p110[1]
-      RR1=p100[1]/p000[1]
-      RR2=p110[1]/p100[1]
-      RR3=p111[1]/p110[1]
+      RD1=p100[1]-p000[1]; RD2=p110[1]-p100[1]; RD3=p111[1]-p110[1]; RDT=p111[1]-p000[1]
+      RR1=p100[1]/p000[1]; RR2=p110[1]/p100[1]; RR3=p111[1]/p110[1]; RRT=p111[1]/p000[1]
       OR1=(p100[1]/(1-p100[1]))/(p000[1]/(1-p000[1]))
       OR2=(p110[1]/(1-p110[1]))/(p100[1]/(1-p100[1]))
       OR3=(p111[1]/(1-p111[1]))/(p110[1]/(1-p110[1]))
-      RDT=p111[1]-p000[1]
-      RRT=p111[1]/p000[1]
       ORT=(p111[1]/(1-p111[1]))/(p000[1]/(1-p000[1]))
-      return(list(RD1,RD2,RD3,RR1,RR2,RR3,OR1,OR2,OR3,NA,NA,NA,RDT,RRT,ORT))
+      return(list(RD1,RD2,RD3,RR1,RR2,RR3,OR1,OR2,OR3,NA,NA,NA,RDT,RRT,ORT,RD1/RDT,RD2/RDT,RD3/RDT,
+                  log(RR1)/log(RRT),log(RR2)/log(RRT),log(RR3)/log(RRT),log(OR1)/log(ORT),log(OR2)/log(ORT),log(OR3)/log(ORT),NA,NA,NA))
     }else if(intv==4){
       p0000=omega(GT$theta_hat, c(x0,x0,x0,x0), confounders, BF)
       p1000=omega(GT$theta_hat, c(x1,x0,x0,x0), confounders, BF) #first part of difference
       p1100=omega(GT$theta_hat, c(x1,x1,x0,x0), confounders, BF) #first part of difference
       p1110=omega(GT$theta_hat, c(x1,x1,x1,x0), confounders, BF) #first part of difference
       p1111=omega(GT$theta_hat, c(x1,x1,x1,x1), confounders, BF) #first part of difference
-      RD1=p1000[1]-p0000[1]
-      RD2=p1100[1]-p1000[1]
-      RD3=p1110[1]-p1100[1]
-      RD4=p1111[1]-p1110[1]
-      RR1=p1000[1]/p0000[1]
-      RR2=p1100[1]/p1000[1]
-      RR3=p1110[1]/p1100[1]
-      RR4=p1111[1]/p1110[1]
+      RD1=p1000[1]-p0000[1]; RD2=p1100[1]-p1000[1]; RD3=p1110[1]-p1100[1]; RD4=p1111[1]-p1110[1]; RDT=p1111[1]-p0000[1]
+      RR1=p1000[1]/p0000[1]; RR2=p1100[1]/p1000[1]; RR3=p1110[1]/p1100[1]; RR4=p1111[1]/p1110[1]; RRT=p1111[1]/p0000[1]
       OR1=(p1000[1]/(1-p1000[1]))/(p0000[1]/(1-p0000[1]))
       OR2=(p1100[1]/(1-p1000[1]))/(p1000[1]/(1-p1000[1]))
       OR3=(p1110[1]/(1-p1110[1]))/(p1100[1]/(1-p1100[1]))
       OR4=(p1111[1]/(1-p1111[1]))/(p1110[1]/(1-p1110[1]))
-      RDT=p1111[1]-p0000[1]
-      RRT=p1111[1]/p0000[1]
       ORT=(p1111[1]/(1-p1111[1]))/(p0000[1]/(1-p0000[1]))
-      return(list(RD1,RD2,RD3,RR1,RR2,RR3,OR1,OR2,OR3,RD4,RR4,OR4,RDT,RRT,ORT))
+      return(list(RD1,RD2,RD3,RR1,RR2,RR3,OR1,OR2,OR3,RD4,RR4,OR4,RDT,RRT,ORT,RD1/RDT,RD2/RDT,RD3/RDT,
+                  log(RR1)/log(RRT),log(RR2)/log(RRT),log(RR3)/log(RRT),
+                  log(OR1)/log(ORT),log(OR2)/log(ORT),log(OR3)/log(ORT),
+                  RD4/RDT,log(RR4)/log(RRT),log(OR4)/log(ORT)))
     }
  }
