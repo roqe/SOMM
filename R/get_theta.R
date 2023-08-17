@@ -14,15 +14,16 @@ get_theta=function(dt,reNAME){
     q.reg=lm(Q~.-S-Y, data=dt)
   }else{
     covnames=colnames(dt)[!colnames(dt)%in%c("Y","W","Q","S","id")]
+    if(length(covnames)==0){ nnn=NULL }else{ nnn=paste0("+",paste0(covnames,collapse = "+")) }
     if(all(dt$Y%in%c(0,1))){
-      y.reg=lme4::glmer(as.formula(paste0("Y~W+Q+S+(1|id)+",paste0(covnames,collapse = "+"))), family=binomial(link="probit"), data=dt)
-      total.effect=summary(lme4::glmer(as.formula(paste0("Y~W+(1|id)+",paste0(covnames,collapse = "+"))), family = binomial(link="probit"), data=dt))$coef[,1]
+      y.reg=lme4::glmer(as.formula(paste0("Y~W+Q+S+(1|id)",nnn)), family=binomial(link="probit"), data=dt)
+      total.effect=summary(lme4::glmer(as.formula(paste0("Y~W+(1|id)",nnn)), family = binomial(link="probit"), data=dt))$coef[,1]
     }else{
-      y.reg=lme4::lmer(as.formula(paste0("Y~W+Q+S+(1|id)+",paste0(covnames,collapse = "+"))), data=dt)
-      total.effect=summary(lme4::lmer(as.formula(paste0("Y~W+(1|id)+",paste0(covnames,collapse = "+"))), data=dt))$coef[,1]
+      y.reg=lme4::lmer(as.formula(paste0("Y~W+Q+S+(1|id)",nnn)), data=dt)
+      total.effect=summary(lme4::lmer(as.formula(paste0("Y~W+(1|id)",nnn)), data=dt))$coef[,1]
     }
-    s.reg=lme4::lmer(as.formula(paste0("S~W+Q+(1|id)+",paste0(covnames,collapse = "+"))), data=dt)
-    q.reg=lme4::lmer(as.formula(paste0("Q~W+(1|id)+",paste0(covnames,collapse = "+"))), data=dt)
+    s.reg=lme4::lmer(as.formula(paste0("S~W+Q+(1|id)",nnn)), data=dt)
+    q.reg=lme4::lmer(as.formula(paste0("Q~W+(1|id)",nnn)), data=dt)
   }
 
   yc=data.table::data.table(t(summary(y.reg)$coef[,1]))
