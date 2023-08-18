@@ -56,10 +56,9 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL,mc
     stopCluster(cl)
 
     set.seed(seed)
-    bsRD1=bss(1,var.boot,F);bsRD2=bss(2,var.boot,F);bsRD3=bss(3,var.boot,F)
-    bsRR1=bss(4,var.boot,T);bsRR2=bss(5,var.boot,T);bsRR3=bss(6,var.boot,T)
-    bsOR1=bss(7,var.boot,T);bsOR2=bss(8,var.boot,T);bsOR3=bss(9,var.boot,T)
-    bsRDT=bss(13,var.boot,F);bsRRT=bss(14,var.boot,T);bsORT=bss(15,var.boot,T)
+    bsRD1=bss(1,var.boot,F);bsRD2=bss(2,var.boot,F);bsRD3=bss(3,var.boot,F);bsRDT=bss(13,var.boot,F)
+    bsRR1=bss(4,var.boot,T);bsRR2=bss(5,var.boot,T);bsRR3=bss(6,var.boot,T);bsRRT=bss(14,var.boot,T)
+    bsOR1=bss(7,var.boot,T);bsOR2=bss(8,var.boot,T);bsOR3=bss(9,var.boot,T);bsORT=bss(15,var.boot,T)
     pmRD1=bss(16,var.boot,F,T);pmRD2=bss(17,var.boot,F,T);pmRD3=bss(18,var.boot,F,T)
     pmRR1=bss(19,var.boot,F,T);pmRR2=bss(20,var.boot,F,T);pmRR3=bss(21,var.boot,F,T)
     pmOR1=bss(22,var.boot,F,T);pmOR2=bss(23,var.boot,F,T);pmOR3=bss(24,var.boot,F,T)
@@ -69,18 +68,24 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL,mc
     PP=PSE_three(GT,x0,x1,confounders,V.matrix)
     psel=c("W>Y","W>S>Y","W>QY","total")
     pse_values=data.table::data.table(stat=c(rep("RD",4),rep("RR",4),rep("OR",4)),path=rep(psel,3),rbind(PP$RD,PP$RR,PP$OR))
-    colnames(pse_values)[3:ncol(pse_values)]=c("effect",nnaa,"prop. of med.")
+    colnames(pse_values)[3:ncol(pse_values)]=c("effect",nnaa,"pm_effect")
     pme_values=pse_values[,c(1,2,7)]
     if(nb>0){
       pse_values=cbind(pse_values[,1:6],
-        rbind(unlist(bsRD1),unlist(bsRD2),unlist(bsRD3),unlist(bsRDT),
-              unlist(bsRR1),unlist(bsRR2),unlist(bsRR3),unlist(bsRRT),
-              unlist(bsOR1),unlist(bsOR2),unlist(bsOR3),unlist(bsORT)))
+        rbind(btbd(pse_values$effect[1],bsRD1,F),btbd(pse_values$effect[2],bsRD2,F),
+              btbd(pse_values$effect[3],bsRD3,F),btbd(pse_values$effect[4],bsRDT,F),
+              btbd(pse_values$effect[5],bsRR1,T),btbd(pse_values$effect[6],bsRR2,T),
+              btbd(pse_values$effect[7],bsRR3,T),btbd(pse_values$effect[8],bsRRT,T),
+              btbd(pse_values$effect[9],bsOR1,T),btbd(pse_values$effect[10],bsOR2,T),
+              btbd(pse_values$effect[11],bsOR3,T),btbd(pse_values$effect[12],bsORT,T)))
       colnames(pse_values)[7:ncol(pse_values)]=nnbb
       pme_values=cbind(pme_values,
-        rbind(unlist(pmRD1),unlist(pmRD2),unlist(pmRD3),rep(NA,3),
-              unlist(pmRR1),unlist(pmRR2),unlist(pmRR3),rep(NA,3),
-              unlist(pmOR1),unlist(pmOR2),unlist(pmOR3),rep(NA,3)))
+        rbind(btbd(pme_values$pm_effect[1],pmRD1,F),btbd(pme_values$pm_effect[2],pmRD2,F),
+              btbd(pme_values$pm_effect[3],pmRD3,F),rep(NA,3),
+              btbd(pme_values$pm_effect[4],pmRR1,T),btbd(pme_values$pm_effect[5],pmRR2,T),
+              btbd(pme_values$pm_effect[6],pmRR3,T),rep(NA,3),
+              btbd(pme_values$pm_effect[7],pmOR1,T),btbd(pme_values$pm_effect[8],pmOR2,T),
+              btbd(pme_values$pm_effect[9],pmOR3,T),rep(NA,3)))
       colnames(pme_values)[4:ncol(pme_values)]=nnbb
     }else{
       pse_values=pse_values[,1:6]
@@ -89,20 +94,26 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL,mc
     PP=PSE_four(GT,x0,x1,confounders,V.matrix)
     psel=c("W>Y","W>S>Y","W>Q>Y","W>Q>S>Y","total")
     pse_values=data.table::data.table(stat=c(rep("RD",5),rep("RR",5),rep("OR",5)),path=rep(psel,3),rbind(PP$RD,PP$RR,PP$OR))
-    colnames(pse_values)[3:ncol(pse_values)]=c("effect",nnaa,"prop. of med.")
+    colnames(pse_values)[3:ncol(pse_values)]=c("effect",nnaa,"pm_effect")
     pme_values=pse_values[,c(1,2,7)]
     if(nb>0){
       bsRD4=bss(10,var.boot,F);bsRR4=bss(11,var.boot,T);bsOR4=bss(12,var.boot,T)
       pmRD4=bss(25,var.boot,F,T);pmRR4=bss(26,var.boot,F,T);pmOR4=bss(27,var.boot,F,T)
       pse_values=cbind(pse_values[,1:6],
-        rbind(unlist(bsRD1),unlist(bsRD2),unlist(bsRD3),unlist(bsRD4),unlist(bsRDT),
-              unlist(bsRR1),unlist(bsRR2),unlist(bsRR3),unlist(bsRR4),unlist(bsRRT),
-              unlist(bsOR1),unlist(bsOR2),unlist(bsOR3),unlist(bsOR4),unlist(bsORT)))
+                       rbind(btbd(pse_values$effect[1],bsRD1,F),btbd(pse_values$effect[2],bsRD2,F),
+                             btbd(pse_values$effect[3],bsRD3,F),btbd(pse_values$effect[4],bsRD4,F),btbd(pse_values$effect[5],bsRDT,F),
+                             btbd(pse_values$effect[6],bsRR1,T),btbd(pse_values$effect[7],bsRR2,T),
+                             btbd(pse_values$effect[8],bsRR3,T),btbd(pse_values$effect[9],bsRR4,T),btbd(pse_values$effect[10],bsRRT,T),
+                             btbd(pse_values$effect[11],bsOR1,T),btbd(pse_values$effect[12],bsOR2,T),
+                             btbd(pse_values$effect[13],bsOR3,T),btbd(pse_values$effect[14],bsOR4,T),btbd(pse_values$effect[15],bsORT,T)))
       colnames(pse_values)[7:ncol(pse_values)]=nnbb
       pme_values=cbind(pme_values,
-        rbind(unlist(pmRD1),unlist(pmRD2),unlist(pmRD3),unlist(pmRD4),rep(NA,3),
-              unlist(pmRR1),unlist(pmRR2),unlist(pmRR3),unlist(pmRR4),rep(NA,3),
-              unlist(pmOR1),unlist(pmOR2),unlist(pmOR3),unlist(pmOR4),rep(NA,3)))
+                       rbind(btbd(pme_values$pm_effect[1],pmRD1,F),btbd(pme_values$pm_effect[2],pmRD2,F),
+                             btbd(pme_values$pm_effect[3],pmRD3,F),btbd(pme_values$pm_effect[4],pmRD4,F),rep(NA,3),
+                             btbd(pme_values$pm_effect[5],pmRR1,T),btbd(pme_values$pm_effect[6],pmRR2,T),
+                             btbd(pme_values$pm_effect[7],pmRR3,T),btbd(pme_values$pm_effect[8],pmRR4,T),rep(NA,3),
+                             btbd(pme_values$pm_effect[9],pmOR1,T),btbd(pme_values$pm_effect[10],pmOR2,T),
+                             btbd(pme_values$pm_effect[11],pmOR3,T),btbd(pme_values$pm_effect[12],pmOR4,T),rep(NA,3)))
       colnames(pme_values)[4:ncol(pme_values)]=nnbb
     }else{
       pse_values=pse_values[,1:6]
@@ -110,7 +121,7 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL,mc
   }
   if(autoR){
     pse_values=pse_values[!is.na(pse_values$`pv(a)`),]
-    pme_values=pme_values[pme_values$`prop. of med.`!=0,]
+    pme_values=pme_values[pme_values$pm_effect!=0,]
   }
   return(list(TOTAL=data.table(RD=o11-o10,RR=o11/o10,OR=(o11/(1-o11))/(o10/(1-o10))),DAG=PP$omega,PSE=pse_values,PM=pme_values))
 }
