@@ -123,7 +123,7 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL,mc
     pse_values=pse_values[!is.na(pse_values$`pv(a)`),]
     pme_values=pme_values[pme_values$pm_effect!=0,]
     pme_values$`lower(b)`[pme_values$`lower(b)`<0]=0
-    pme_values$`lower(b)`[pme_values$`lower(b)`>1]=1
+    pme_values$`upper(b)`[pme_values$`upper(b)`>1]=1
   }
   return(list(TOTAL=data.table(RD=o11-o10,RR=o11/o10,OR=(o11/(1-o11))/(o10/(1-o10))),DAG=PP$omega,PSE=pse_values,PM=pme_values))
 }
