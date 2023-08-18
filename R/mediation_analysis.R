@@ -50,7 +50,7 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL,mc
     pb = txtProgressBar(max = nb, style = 3)
     progress = function(n) setTxtProgressBar(pb, n)
     opts = list(progress = progress)
-    var.boot=data.table::rbindlist(foreach::foreach(boot.count=1:nb, .options.snow = opts) %dopar% {
+    var.boot=data.table::rbindlist(foreach::foreach(boot.count=1:nb, .options.snow = opts, .packages = "data.table") %dopar% {
       set.seed(seed*boot.count)
       create_var_boot(nb, dt, confounders=confounders, intv=intv, reNAME=reNAME, x0, x1, stra) })
     stopCluster(cl)
@@ -82,10 +82,10 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL,mc
       pme_values=cbind(pme_values,
         rbind(btbd(pme_values$pm_effect[1],pmRD1,F),btbd(pme_values$pm_effect[2],pmRD2,F),
               btbd(pme_values$pm_effect[3],pmRD3,F),rep(NA,3),
-              btbd(pme_values$pm_effect[4],pmRR1,T),btbd(pme_values$pm_effect[5],pmRR2,T),
-              btbd(pme_values$pm_effect[6],pmRR3,T),rep(NA,3),
-              btbd(pme_values$pm_effect[7],pmOR1,T),btbd(pme_values$pm_effect[8],pmOR2,T),
-              btbd(pme_values$pm_effect[9],pmOR3,T),rep(NA,3)))
+              btbd(pme_values$pm_effect[5],pmRR1,F),btbd(pme_values$pm_effect[6],pmRR2,F),
+              btbd(pme_values$pm_effect[7],pmRR3,F),rep(NA,3),
+              btbd(pme_values$pm_effect[9],pmOR1,F),btbd(pme_values$pm_effect[10],pmOR2,F),
+              btbd(pme_values$pm_effect[11],pmOR3,F),rep(NA,3)))
       colnames(pme_values)[4:ncol(pme_values)]=nnbb
     }else{
       pse_values=pse_values[,1:6]
@@ -110,10 +110,10 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL,mc
       pme_values=cbind(pme_values,
                        rbind(btbd(pme_values$pm_effect[1],pmRD1,F),btbd(pme_values$pm_effect[2],pmRD2,F),
                              btbd(pme_values$pm_effect[3],pmRD3,F),btbd(pme_values$pm_effect[4],pmRD4,F),rep(NA,3),
-                             btbd(pme_values$pm_effect[5],pmRR1,T),btbd(pme_values$pm_effect[6],pmRR2,T),
-                             btbd(pme_values$pm_effect[7],pmRR3,T),btbd(pme_values$pm_effect[8],pmRR4,T),rep(NA,3),
-                             btbd(pme_values$pm_effect[9],pmOR1,T),btbd(pme_values$pm_effect[10],pmOR2,T),
-                             btbd(pme_values$pm_effect[11],pmOR3,T),btbd(pme_values$pm_effect[12],pmOR4,T),rep(NA,3)))
+                             btbd(pme_values$pm_effect[6],pmRR1,F),btbd(pme_values$pm_effect[7],pmRR2,F),
+                             btbd(pme_values$pm_effect[8],pmRR3,F),btbd(pme_values$pm_effect[9],pmRR4,F),rep(NA,3),
+                             btbd(pme_values$pm_effect[11],pmOR1,F),btbd(pme_values$pm_effect[12],pmOR2,F),
+                             btbd(pme_values$pm_effect[13],pmOR3,F),btbd(pme_values$pm_effect[14],pmOR4,F),rep(NA,3)))
       colnames(pme_values)[4:ncol(pme_values)]=nnbb
     }else{
       pse_values=pse_values[,1:6]
@@ -122,6 +122,8 @@ mediation_analysis=function(dt,confounders=c(),nb=0,intv=3,unit=1,reNAME=NULL,mc
   if(autoR){
     pse_values=pse_values[!is.na(pse_values$`pv(a)`),]
     pme_values=pme_values[pme_values$pm_effect!=0,]
+    pme_values$`lower(b)`[pme_values$`lower(b)`<0]=0
+    pme_values$`lower(b)`[pme_values$`lower(b)`>1]=1
   }
   return(list(TOTAL=data.table(RD=o11-o10,RR=o11/o10,OR=(o11/(1-o11))/(o10/(1-o10))),DAG=PP$omega,PSE=pse_values,PM=pme_values))
 }

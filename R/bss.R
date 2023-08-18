@@ -1,7 +1,7 @@
 #' @import data.table
 bss=function(ind,var.boot,log_scale,pos=F,exact=F){
   dd=var.boot[[ind]]
-  if(pos&(sd(dd)!=0)){ dd=dd[dd>0] }
+  if(pos&(sd(dd)!=0)){ dd=dd[dd>0&dd<1] }
   if(log_scale){ dd=log(dd) }
   if(exact|sd(dd)==0){
     cc=length(dd)
