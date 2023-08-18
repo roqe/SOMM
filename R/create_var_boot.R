@@ -1,27 +1,29 @@
-#' @import foreach
 create_var_boot=function(nb, dt, confounders=c(), intv=3, reNAME=NULL, x0, x1, stra=1){
   if(stra>1){
-    dt.BB=c()
-    for (i in 1:stra){
-      dt.Q=dt[dt$Q<=i & dt$Q>(i-1),]
-      dt.B=c()
-      for (j in 1:stra){
-        w_range=which(dt.Q$W<=j & dt.Q$W>(j-1))
-        dt.b=as.data.frame(dt.Q[w_range,][sample(1:sum(w_range), replace=T),])
-        dt.B=rbind(dt.B, dt.b)
-      }
-      dt.BB=rbind(dt.BB,dt.B)
+    if(!is.null(reNAME)){
+      dt.raw=dt
+      dt=aggregate(.~id, data=dt, mean)
     }
-    if (!is.null(reNAME)) {
-      dt.BB=dt.BB[-is.na(dt.BB$id),]
+    uQ=diff(range(dt$Q))/(stra-1)
+    q_range=c(seq(min(dt$Q),max(dt$Q),by=uQ),max(dt$Q)+0.01)
+    dt.BB=rbindlist(lapply(1:stra,function(i){
+      dt.Q=dt[dt$Q<q_range[i+1] & dt$Q>=q_range[i],]
+      uW=diff(range(dt.Q$W))/(stra-1)
+      w_range=c(seq(min(dt.Q$W),max(dt.Q$W),by=uW),max(dt.Q$W)+0.01)
+      dt.B=rbindlist(lapply(1:stra,function(j){
+        ww=(dt.Q$W<w_range[j+1] & dt.Q$W>=w_range[j])
+        return(dt.Q[ww,][sample(1:sum(ww), replace=T),])
+      }))
+    }))
+    if(!is.null(reNAME)) {
+      dt.BB=dt.BB[!is.na(dt.BB$id),]
       a=table(dt.BB$id)
-      dt.boot=c()
-      for (AA in min(a):max(a)){
-        b=dt[which(dt$id %in% names(which(a>=AA))),]
-        dt.boot=rbind(dt.boot,b)
-      }
+      dt.boot=rbindlist(lapply(min(a):max(a),function(AA){
+        return(dt.raw[which(dt.raw$id %in% names(which(a>=AA))),])
+      }))
     }
-    if (is.null(reNAME)) dt.boot=dt.BB[!is.na(dt.BB$Y),]
+    if(is.null(reNAME)) dt.boot=dt.BB[!is.na(dt.BB$Y),]
+
   }else{
     dt.boot=as.data.frame(dt[sample(1:nrow(dt), replace=TRUE),])
   }
