@@ -1,5 +1,6 @@
 rd=function(pa,pb,V){
   path=pa[1]-pb[1]
+  if(is.null(V)){ return(path) }
   der=matrix(pa[-1]-pb[-1], nrow=1)
   std.error=sqrt(der%*%V%*%t(der))
   pv=2*min(pnorm(abs(path/std.error)),1-pnorm(abs(path/std.error)))

@@ -1,10 +1,10 @@
 #' @import data.table
-PSE_three=function(GT,x0,x1,confounders,V.matrix){
-  BF=(summary(GT$reg$y.reg)$family[[1]]=="binomial")
-  p000=omega(GT$theta_hat, c(x0,x0,x0), confounders, BF)
-  p100=omega(GT$theta_hat, c(x1,x0,x0), confounders, BF)
-  p110=omega(GT$theta_hat, c(x1,x1,x0), confounders, BF)
-  p111=omega(GT$theta_hat, c(x1,x1,x1), confounders, BF)
+PSE_three=function(GT,x0,x1,cnfd,cnfd2,cnfd3,V.matrix){
+  BF=ifelse(class(GT$reg$y.reg)[1]=="clogit",T,summary(GT$reg$y.reg)$family[[1]]=="binomial")
+  p000=omega(GT$theta_hat, c(x0,x0,x0), cnfd,cnfd2,cnfd3, BF)
+  p100=omega(GT$theta_hat, c(x1,x0,x0), cnfd,cnfd2,cnfd3, BF)
+  p110=omega(GT$theta_hat, c(x1,x1,x0), cnfd,cnfd2,cnfd3, BF)
+  p111=omega(GT$theta_hat, c(x1,x1,x1), cnfd,cnfd2,cnfd3, BF)
   RD1=rd(p100,p000,V.matrix); RD2=rd(p110,p100,V.matrix); RD3=rd(p111,p110,V.matrix); RDT=rd(p111,p000,V.matrix)
   RR1=rr(p100,p000,V.matrix); RR2=rr(p110,p100,V.matrix); RR3=rr(p111,p110,V.matrix); RRT=rr(p111,p000,V.matrix)
   OR1=or(p100,p000,V.matrix); OR2=or(p110,p100,V.matrix); OR3=or(p111,p110,V.matrix); ORT=or(p111,p000,V.matrix)

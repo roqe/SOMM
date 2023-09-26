@@ -16,10 +16,13 @@ create_vmatrix=function(GT){
 
 check_vmatrix=function(reg,theta){
   ll=length(theta)
+  names(theta)[1]="(Intercept)"
   tt=matrix(0, nr=ll, nc=ll, dimnames=list(names(theta),names(theta)))
   if(sum(theta)!=0){
     vv=as.matrix(vcov(reg))
-    tt[dimnames(vv)[[1]],dimnames(vv)[[2]]]=vv
+    on=dimnames(vv)[[1]]
+    on=on[on%in%names(theta)]
+    tt[on,on]=vv[on,on]
   }
   return(tt)
 }

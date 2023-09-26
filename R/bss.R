@@ -1,16 +1,17 @@
 #' @import data.table
 bss=function(ind,var.boot,log_scale,pos=F,exact=F){
   dd=var.boot[[ind]]
-  if(pos&(sd(dd)!=0)){ dd=dd[dd>=0&dd<=1] }
-  if(log_scale){ dd=log(dd) }
-  if(exact|sd(dd)==0){
+  sddd=sd(dd,na.rm = T)
+  if(pos&sddd!=0){ dd=dd[dd>=0&dd<=1] }
+  if(log_scale){ dd=log(dd); sddd=sd(dd,na.rm = T) }
+  if(exact|sddd==0){
     cc=length(dd)
   }else{
-    cc=1e+6; dd=rnorm(cc, mean=mean(dd), sd=sd(dd))
+    cc=1e+6; dd=rnorm(cc, mean=mean(dd,na.rm = T), sd=sddd)
   }
   vv=sum(dd>0)/cc
   pp=min(vv,(1-vv))*2
-  return(list(pp=pp,btsd=sd(dd)))
+  return(list(pp=pp,btsd=sddd))
 }
 
 btbd=function(trmn,bss,log_scale){
