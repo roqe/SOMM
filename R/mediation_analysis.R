@@ -58,9 +58,13 @@ mediation_analysis=function(dt,cnfd=c(),dt2=NULL,cnfd2=c(),dt3=NULL,cnfd3=c(),nb
   }
   GT=get_theta(dt,dt2,dt3,reNAME,grpID)
   fid=names(dt)[which(sapply(dt,is.factor))]
-  cnfd=cnfd[names(cnfd)%in%c(fid,names(GT$theta_hat$bc))]
-  cnfd2=cnfd2[names(cnfd2)%in%c(fid,names(GT$theta_hat$ac))]
-  cnfd3=cnfd3[names(cnfd3)%in%c(fid,names(GT$theta_hat$dc))]
+  eid1=names(cnfd)%in%c(fid,names(GT$theta_hat$bc))
+  eid2=names(cnfd2)%in%c(fid,names(GT$theta_hat$ac))
+  eid3=names(cnfd3)%in%c(fid,names(GT$theta_hat$dc))
+  if(sum(!eid1)!=0){ print(paste("model Y remove covariate:",paste(names(cnfd)[!eid1],collapse = ", "))) }
+  if(length(cnfd2)!=0&sum(!eid2)!=0){ print(paste("model S remove covariate:",paste(names(cnfd2)[!eid2],collapse = ", "))) }
+  if(length(cnfd3)!=0&sum(!eid3)!=0){ print(paste("model Q remove covariate:",paste(names(cnfd3)[!eid3],collapse = ", "))) }
+  cnfd=cnfd[eid1]; cnfd2=cnfd2[eid2]; cnfd3=cnfd3[eid3]
   o11=pnorm(sum(GT$total*c(1,x1,cnfd)))
   o10=pnorm(sum(GT$total*c(1,x0,cnfd)))
   nnaa=c("lower(a)","upper(a)","pv(a)")
