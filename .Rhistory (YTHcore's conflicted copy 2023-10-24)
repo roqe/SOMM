@@ -1,0 +1,255 @@
+library(devtools)
+library(roxygen2)
+detach("package:SOMM", unload=TRUE)
+setwd("~/Dropbox/R_packages/SOMM/")
+document()
+#check(manual = T)
+#build_manual()
+setwd("..")
+install("SOMM")
+library(SOMM)
+library(devtools)
+library(roxygen2)
+detach("package:SOMM", unload=TRUE)
+setwd("~/Dropbox/R_packages/SOMM/")
+document()
+#check(manual = T)
+#build_manual()
+setwd("..")
+install("SOMM")
+library(SOMM)
+res=mediation_analysis(eIVF, confounders=c(log(36),log(26)), intv=3)
+library(devtools)
+library(roxygen2)
+detach("package:SOMM", unload=TRUE)
+setwd("~/Dropbox/R_packages/SOMM/")
+document()
+#check(manual = T)
+#build_manual()
+setwd("..")
+install("SOMM")
+library(SOMM)
+res=mediation_analysis(eIVF, confounders=c(log(36),log(26)), intv=3)
+res
+load("~/Dropbox/R_packages/QwQ/teest.RData")
+tt2=mediation_analysis(dt[,-5], confounders=pred.val, intv=3, nb = 100, mc=50)
+tt2
+load("~/Dropbox/R_packages/QwQ/dat.RData")
+rr1=mediation_analysis(dat, confounders=confounders, intv=4)
+confounders=apply(dat[,5:ncol(dat)],2,median)
+rr1=mediation_analysis(dat, confounders=confounders, intv=4)
+rr1
+rr2=mediation_analysis(dat, confounders=confounders, intv=4, nb = 500, mc=50)
+rr2
+rr3=mediation_analysis(dat, confounders=confounders, intv=3, nb = 500, mc=50, stra = 5)
+rr3
+load("~/Dropbox/R_packages/QwQ/dat_1.RData")
+pp1=mediation_analysis(dt=dat,nb=500,reNAME="uid",intv=4,mc=10,stra=5)
+pp1
+pp1
+detach("package:SOMM", unload=TRUE)
+setwd("~/Dropbox/R_packages/SOMM/")
+document()
+#check(manual = T)
+#build_manual()
+setwd("..")
+install("SOMM")
+library(SOMM)
+load("~/Dropbox/R_packages/QwQ/teest.RData")
+tt2=mediation_analysis(dt[,-5], confounders=pred.val, intv=3, nb = 100, mc=50)
+tt3=mediation_analysis(dt[,1:5], intv=4, reNAME = "rep.id")
+tt4=mediation_analysis(dt[,1:8], confounders=pred.val[1:3], intv=4, reNAME = "rep.id", nb = 100, mc=50)
+tt5=mediation_analysis(dt[,1:8], confounders=pred.val[1:3], intv=4, reNAME = "rep.id", nb = 100, mc=50, stra = 5)
+load("~/Dropbox/R_packages/QwQ/dat.RData")
+confounders=apply(dat[,5:ncol(dat)],2,median)
+rr2=mediation_analysis(dat, confounders=confounders, intv=4, nb = 500, mc=50)
+dat$Familiar=as.factor(ifelse(dat$Familiar>median(dat$Familiar),1,0))
+rr3=mediation_analysis(dat, confounders=confounders, intv=3, nb = 500, mc=50, stra = 5)
+load("~/Dropbox/R_packages/QwQ/dat_1.RData")
+pp1=mediation_analysis(dt=dat,nb=500,reNAME="uid",intv=4,mc=10,stra=5)
+pp2=mediation_analysis(dt=dat,nb=500,reNAME="uid",intv=3,mc=10)
+tt5
+rr3
+pp2
+detach("package:SOMM", unload=TRUE)
+setwd("~/Dropbox/R_packages/SOMM/")
+document()
+#check(manual = T)
+#build_manual()
+setwd("..")
+install("SOMM")
+library(SOMM)
+sign(3)
+sign(-3)
+detach("package:SOMM", unload=TRUE)
+setwd("~/Dropbox/R_packages/SOMM/")
+document()
+#check(manual = T)
+#build_manual()
+setwd("..")
+install("SOMM")
+library(SOMM)
+load("~/Dropbox/R_packages/QwQ/dat.RData")
+confounders=apply(dat[,5:ncol(dat)],2,median)
+rr2=mediation_analysis(dat, confounders=confounders, intv=4, nb = 500, mc=50)
+rr2
+rr3=mediation_analysis(dat, confounders=confounders, intv=3, nb = 500, mc=50, stra = 5)
+rr3
+detach("package:SOMM", unload=TRUE)
+setwd("~/Dropbox/R_packages/SOMM/")
+document()
+#check(manual = T)
+#build_manual()
+setwd("..")
+install("SOMM")
+library(SOMM)
+rr3=mediation_analysis(dat, confounders=confounders, intv=3, nb = 500, mc=50, stra = 5)
+rr3
+sign(0)
+sign(c(0,1,-1))
+sum(sign(c(0,1,-1))
+)
+sapply(paste0("SOMM/R/",dir("SOMM/R")),source)
+dt=dat
+colnames(dt)[1:4]=c("Y","W","Q","S")
+colnames(dt)[colnames(dt)==reNAME]="id"
+x0=0; x1=1
+reNAME="uid"
+GT=get_theta(dt,reNAME)
+colnames(dt)[colnames(dt)==reNAME]="id"
+GT=get_theta(dt,reNAME)
+dt
+reNAME=NULL
+intv=3 nb = 500; mc=50
+intv=3; nb = 500; mc=50
+GT=get_theta(dt,reNAME)
+o11=pnorm(sum(GT$total*c(1,x1,confounders)))
+o10=pnorm(sum(GT$total*c(1,x0,confounders)))
+nnaa=c("lower(a)","upper(a)","pv(a)")
+nnbb=c("lower(b)","upper(b)","pv(b)")
+V.matrix=create_vmatrix(GT)
+if(sum(dt$S,na.rm = T)==0){
+GT$theta_hat$bc[is.na(GT$theta_hat$bc)]=0
+V.matrix[is.na(V.matrix)]=0
+}
+PP=PSE_three(GT,x0,x1,confounders,V.matrix)
+PP$RD
+PP$RR
+log(1,3,5)
+sign(1,3,4)
+sign(c(1,3,4)
+)
+log(c(1,3,5))
+c(1,3,5)!=0
+sum(c(1,3,5)!=0
+)
+source('~/Dropbox/R_packages/SOMM/R/PSE_three.R')
+PP=PSE_three(GT,x0,x1,confounders,V.matrix)
+PP$RD
+source('~/Dropbox/R_packages/SOMM/R/PSE_four.R')
+PP=PSE_four(GT,x0,x1,confounders,V.matrix)
+PP$RD
+PP$OR
+detach("package:SOMM", unload=TRUE)
+setwd("~/Dropbox/R_packages/SOMM/")
+document()
+#check(manual = T)
+#build_manual()
+setwd("..")
+install("SOMM")
+library(SOMM)
+load("~/Dropbox/R_packages/QwQ/dat.RData")
+confounders=apply(dat[,5:ncol(dat)],2,median)
+rr2=mediation_analysis(dat, confounders=confounders, intv=4, nb = 500, mc=50)
+rr2
+detach("package:SOMM", unload=TRUE)
+setwd("~/Dropbox/R_packages/SOMM/")
+document()
+#check(manual = T)
+#build_manual()
+setwd("..")
+install("SOMM")
+library(SOMM)
+rr2=mediation_analysis(dat, confounders=confounders, intv=4, nb = 500, mc=50)
+rr2
+load("~/Dropbox/R_packages/QwQ/dat_1.RData")
+pp1=mediation_analysis(dt=dat,nb=500,reNAME="uid",intv=4,mc=10,stra=5)
+pp1
+library(devtools)
+install_github("roqe/SOMM")
+library(SOMM)
+load("~/Dropbox/R_packages/QwQ/teest.RData")
+tt2=mediation_analysis(dt[,-5], cnfd=pred.val, intv=3)
+mediation_analysis
+load("~/Dropbox/R_packages/QwQ/teest.RData")
+tt2=mediation_analysis(dt[,-5], confounders=pred.val, intv=3)
+tt2
+create_vmatrix
+SOMM::create_vmatrix
+dt=dt[,-5]
+confounders=pred.val; intv=3
+colnames(dt)[1:4]=c("Y","W","Q","S")
+x0=0; x1=1
+GT=get_theta(dt,reNAME)
+GT=get_theta(dt,reNAME=NULL)
+o11=pnorm(sum(GT$total*c(1,x1,confounders)))
+o10=pnorm(sum(GT$total*c(1,x0,confounders)))
+nnaa=c("lower(a)","upper(a)","pv(a)")
+nnbb=c("lower(b)","upper(b)","pv(b)")
+V.matrix=create_vmatrix(GT)
+create_vmatrix=function(GT){
+y.reg=GT$reg$y.reg
+s.reg=GT$reg$s.reg
+q.reg=GT$reg$q.reg
+beta=GT$theta_hat$bc
+alpha=GT$theta_hat$ac
+delta=GT$theta_hat$dc
+lb=length(beta); la=length(alpha); ld=length(delta)
+dimensions=sum(lb+la+ld)
+V.matrix=matrix(0, nr=dimensions, nc=dimensions)
+V.matrix[c(1:lb),c(1:lb)]=check_vmatrix(y.reg,beta)
+V.matrix[c((1+lb):(lb+la)),c((1+lb):(lb+la))]=check_vmatrix(s.reg,alpha)
+V.matrix[c((1+lb+la):(lb+la+ld)),c((1+lb+la):(lb+la+ld))]=check_vmatrix(q.reg,delta)
+return(V.matrix)
+}
+check_vmatrix=function(reg,theta){
+ll=length(theta)
+tt=matrix(0, nr=ll, nc=ll, dimnames=list(names(theta),names(theta)))
+if(sum(theta)!=0){
+vv=as.matrix(vcov(reg))
+tt[dimnames(vv)[[1]],dimnames(vv)[[2]]]=vv
+}
+return(tt)
+}
+V.matrix=create_vmatrix(GT)
+V.matrix[1:3,1:3]
+y.reg=GT$reg$y.reg
+s.reg=GT$reg$s.reg
+q.reg=GT$reg$q.reg
+beta=GT$theta_hat$bc
+alpha=GT$theta_hat$ac
+delta=GT$theta_hat$dc
+lb=length(beta); la=length(alpha); ld=length(delta)
+dimensions=sum(lb+la+ld)
+V.matrix=matrix(0, nr=dimensions, nc=dimensions)
+V.matrix[c(1:lb),c(1:lb)]=check_vmatrix(y.reg,beta)
+V.matrix[c((1+lb):(lb+la)),c((1+lb):(lb+la))]=check_vmatrix(s.reg,alpha)
+V.matrix[c((1+lb+la):(lb+la+ld)),c((1+lb+la):(lb+la+ld))]=check_vmatrix(q.reg,delta)
+beta
+beta
+check_vmatrix(y.reg,beta)
+tt2
+tt5=mediation_analysis(dt[,1:8], cnfd=pred.val[1:3], intv=3, reNAME = "rep.id", nb = 100, mc=10)
+tt5=mediation_analysis(dt[,1:8], confounders =pred.val[1:3], intv=3, reNAME = "rep.id", nb = 100, mc=10)
+load("~/Dropbox/R_packages/QwQ/dat.RData")
+rr3=mediation_analysis(dat, cnfd=cnfd, intv=3, nb = 100, mc=10, stra = 5)
+rr3=mediation_analysis(dat, confounders=cnfd, intv=3, nb = 100, mc=10, stra = 5)
+cnfd=apply(dat[,5:ncol(dat)],2,median)
+rr3=mediation_analysis(dat, confounders=cnfd, intv=3, nb = 100, mc=10, stra = 5)
+rr3
+rr2
+rr2=mediation_analysis(dat, cnfd=cnfd, intv=4, nb = 100, mc=10)
+rr2=mediation_analysis(dat, confounders=cnfd, intv=4, nb = 100, mc=10)
+rr2
+rr3
+bss

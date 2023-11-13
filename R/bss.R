@@ -1,9 +1,9 @@
 #' @import data.table
 bss=function(ind,var.boot,log_scale,pos=F,exact=F){
   dd=var.boot[[ind]]
-  if(all(is.na(dd))){return( list(pp=NA,btsd=NA)) }
+  if(all(is.na(dd))){ return(list(pp=NA,btsd=NA)) }
   sddd=sd(dd,na.rm = T)
-  if(pos&sddd!=0){ dd=dd[dd>=0&dd<=1] }
+  if(pos&sddd!=0){ dd=dd[dd>=0] }
   if(log_scale){ dd=log(dd); sddd=sd(dd,na.rm = T) }
   if(exact|sddd==0){
     cc=length(dd)

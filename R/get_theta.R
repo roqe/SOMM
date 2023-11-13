@@ -2,7 +2,7 @@
 #' @export
 get_theta=function(dt,dt2,dt3,reNAME,grpID){
   if(!is.null(reNAME)){
-    print("Note: Apply random-effct models.")
+    print("Note: Applying random-effct models.")
     covnames=colnames(dt)[!colnames(dt)%in%c("Y","W","Q","S","id","grp")]
     if(length(covnames)==0){ nnn=NULL }else{ nnn=paste0("+",paste0(covnames,collapse = "+")) }
     if(all(dt$Y%in%c(0,1))){
@@ -16,7 +16,7 @@ get_theta=function(dt,dt2,dt3,reNAME,grpID){
     q.reg=lme4::lmer(as.formula(paste0("Q~W+(1|id)",nnn)), data=dt)
   }else if(!is.null(grpID)){
     if(all(dt$Y%in%c(0,1))){
-      print("Note: Apply conditional logistic models.")
+      print("Note: Applying conditional logistic models.")
       total.effect=NA
       y.reg=survival::clogit(Y~.+strata(grp), data=dt)
       if(!is.null(dt2) & all(dt2$S%in%c(0,1))){
@@ -30,11 +30,11 @@ get_theta=function(dt,dt2,dt3,reNAME,grpID){
     }
   }else{
     if(all(dt$Y%in%c(0,1))){
-      print("Note: Apply GLM models, binomial outcome, probit link.")
+      print("Note: Applying GLM models, binomial outcome, probit link.")
       y.reg=glm(Y~., family = binomial(link="probit"), data=dt)
       total.effect=summary(glm(Y~.-Q-S, family = binomial(link="probit"), data=dt))$coef[,1]
     }else{
-      print("Note: Apply GLM models, gaussian outcome.")
+      print("Note: Applying GLM models, gaussian outcome.")
       y.reg=glm(Y~., family = gaussian, data=dt)
       total.effect=summary(glm(Y~.-Q-S, data=dt))$coef[,1]
     }
@@ -53,6 +53,11 @@ get_theta=function(dt,dt2,dt3,reNAME,grpID){
     alpha.hat=beta.hat[,!"S"]
     alpha.hat[1,]=0
   }
+
+  ac=data.table::data.table(t(summary(s.reg)$coef[,1]))
+  alpha.hat=data.table::data.table(I=ifelse("(Intercept)"%in%names(ac),ac[["(Intercept)"]],0),ac[1,c("W")],
+                                   Q=ifelse("Q"%in%names(ac),ac[["Q"]],0),ac[1,..covnames])
+
   dc=data.table::data.table(t(summary(q.reg)$coef[,1]))
   delta.hat=data.table::data.table(I=ifelse("(Intercept)"%in%names(dc),dc[["(Intercept)"]],0),dc[1,c("W")],dc[1,..covnames])
   ss.hat=ifelse("S"%in%names(yc),ifelse(!is.na(yc[["S"]]),sqrt(mean(resid(s.reg)^2)),0),0)

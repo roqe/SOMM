@@ -44,8 +44,8 @@ dat2=sim_mediation_data(c(0,1),1000,para) #continous exposure
 res2_4=mediation_analysis(dat2, intv=4, nb=500)
 tru2_4=calc_true_value(para, intv=4)
 summary(eIVF) #subset eIVF data for demo
-res3_3=mediation_analysis(eIVF, cnfd=c(log(36),log(26)))
-res3_4=mediation_analysis(eIVF, cnfd=c(log(36),log(26)), intv=4)
+res3_3=mediation_analysis(eIVF, cnfd=c(age=log(36),bmi=log(26)))
+res3_4=mediation_analysis(eIVF, cnfd=c(age=log(36),bmi=log(26)), intv=4)
 para_sg=c(rep(-0.5,3),rep(0,4),rep(-0.5,2),1,1) # for single mediator, set exposure-related parameters into 0
 dat_sg=sim_mediation_data(0.5,1000,para_sg)
 dat_sg$S=0 # set the second mediator into 0
