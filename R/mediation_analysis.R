@@ -199,6 +199,6 @@ mediation_analysis=function(dt,cnfd=c(),dt2=NULL,cnfd2=c(),dt3=NULL,cnfd3=c(),nb
     return(list(TOTAL=data.table(risk_difference=o11-o10,risk_ratio=o11/o10,odds_ratio=(o11/(1-o11))/(o10/(1-o10))),
                 OMEGA=PP$omega,PSE=pse_values,PM=pme_values))
   }else{
-    return(list(TOTAL=data.table(mean_difference=o11-o10,OMEGA=PP$omega,PSE=pse_values,PM=pme_values))
+    return(list(TOTAL=data.table(mean_difference=o11-o10),OMEGA=PP$omega,PSE=pse_values,PM=pme_values))
   }
 }
