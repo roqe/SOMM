@@ -67,8 +67,13 @@ mediation_analysis=function(dt,cnfd=c(),dt2=NULL,cnfd2=c(),dt3=NULL,cnfd3=c(),nb
   if(length(cnfd2)!=0&sum(!eid2)!=0){ print(paste("model S remove covariate:",paste(names(cnfd2)[!eid2],collapse = ", "))) }
   if(length(cnfd3)!=0&sum(!eid3)!=0){ print(paste("model Q remove covariate:",paste(names(cnfd3)[!eid3],collapse = ", "))) }
   cnfd=cnfd[eid1]; cnfd2=cnfd2[eid2]; cnfd3=cnfd3[eid3]
-  o11=pnorm(sum(GT$total[c("(Intercept)","W",names(cnfd))]*c(1,x1,cnfd)))
-  o10=pnorm(sum(GT$total[c("(Intercept)","W",names(cnfd))]*c(1,x0,cnfd)))
+  if(BF){
+    o11=pnorm(sum(GT$total[c("(Intercept)","W",names(cnfd))]*c(1,x1,cnfd)))
+    o10=pnorm(sum(GT$total[c("(Intercept)","W",names(cnfd))]*c(1,x0,cnfd)))
+  }else{
+    o11=sum(GT$total[c("(Intercept)","W",names(cnfd))]*c(1,x1,cnfd))
+    o10=sum(GT$total[c("(Intercept)","W",names(cnfd))]*c(1,x0,cnfd))
+  }
   nnaa=c("lower(a)","upper(a)","pv(a)")
   nnbb=c("lower(b)","upper(b)","pv(b)")
   V.matrix=create_vmatrix(GT)
