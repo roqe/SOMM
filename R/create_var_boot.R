@@ -42,10 +42,11 @@ create_var_boot=function(dt,cnfd=c(),dt2=NULL,cnfd2=c(),dt3=NULL,cnfd3=c(),nb,in
   if(class(GT)=="try-error"){ return(NULL) }
   if(intv==3){
     PP=PSE_three(GT,x0,x1,cnfd,cnfd2,cnfd3,V.matrix=NULL,BF)
-    if(sum(PP$omega<0)>0){ return(NULL) }
     if(BF){
-      return(data.table(t(c(PP$RD$V1[1:3],PP$RR$V1[1:3],PP$OR$V1[1:3],NA,NA,NA,
-                            PP$RD$V1[4],PP$RR$V1[4],PP$OR$V1[4],PP$RD$PM[1:3],PP$RR$PM[1:3],PP$OR$PM[1:3],NA,NA,NA))))
+      if(sum(PP$omega<0)>0){ return(NULL) }else{
+        return(data.table(t(c(PP$RD$V1[1:3],PP$RR$V1[1:3],PP$OR$V1[1:3],NA,NA,NA,
+                              PP$RD$V1[4],PP$RR$V1[4],PP$OR$V1[4],PP$RD$PM[1:3],PP$RR$PM[1:3],PP$OR$PM[1:3],NA,NA,NA))))
+      }
     }else{
       return(data.table(t(c(PP$RD$V1[1:3],rep(NA,9),PP$RD$V1[4],NA,NA,PP$RD$PM[1:3],rep(NA,9)))))
     }

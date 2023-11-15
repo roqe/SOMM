@@ -2,13 +2,14 @@
 #' @export
 get_theta=function(dt,dt2,dt3,reNAME,grpID){
   if(!is.null(reNAME)){
-    print("Note: Applying random-effct models.")
     covnames=colnames(dt)[!colnames(dt)%in%c("Y","W","Q","S","id","grp")]
     if(length(covnames)==0){ nnn=NULL }else{ nnn=paste0("+",paste0(covnames,collapse = "+")) }
     if(all(dt$Y%in%c(0,1))){
+      print("Note: Applying random-effct models with probit link.")
       y.reg=lme4::glmer(as.formula(paste0("Y~W+Q+S+(1|id)",nnn)), family=binomial(link="probit"), data=dt)
       total.effect=summary(lme4::glmer(as.formula(paste0("Y~W+(1|id)",nnn)), family = binomial(link="probit"), data=dt))$coef[,1]
     }else{
+      print("Note: Applying random-effct models with identity link.")
       y.reg=lme4::lmer(as.formula(paste0("Y~W+Q+S+(1|id)",nnn)), data=dt)
       total.effect=summary(lme4::lmer(as.formula(paste0("Y~W+(1|id)",nnn)), data=dt))$coef[,1]
     }
