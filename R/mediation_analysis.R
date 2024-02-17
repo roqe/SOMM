@@ -76,6 +76,7 @@ mediation_analysis=function(dt,cnfd=c(),dt2=NULL,cnfd2=c(),dt3=NULL,cnfd3=c(),nb
   }
   nnaa=c("lower(a)","upper(a)","pv(a)")
   nnbb=c("lower(b)","upper(b)","pv(b)")
+  nnba=c("lower(n)","upper(n)","pv(n)")
   V.matrix=create_vmatrix(GT)
   if(sum(dt$S,na.rm = T)==0){
     GT$theta_hat$bc[is.na(GT$theta_hat$bc)]=0
@@ -93,11 +94,11 @@ mediation_analysis=function(dt,cnfd=c(),dt2=NULL,cnfd2=c(),dt3=NULL,cnfd3=c(),nb
     snow::stopCluster(cl)
 
     set.seed(seed)
-    bsRD1=bss(1,var.boot,F);bsRD2=bss(2,var.boot,F);bsRD3=bss(3,var.boot,F);bsRDT=bss(13,var.boot,F)
+    bsRD1= bss(1,var.boot,F,F);bsRD2= bss(2,var.boot,F,F);bsRD3= bss(3,var.boot,F,F);bsRDT=bss(13,var.boot,F,F)
     pmRD1=bss(16,var.boot,F,T);pmRD2=bss(17,var.boot,F,T);pmRD3=bss(18,var.boot,F,T)
     if(BF){
-      bsRR1=bss(4,var.boot,T,T);bsRR2=bss(5,var.boot,T,T);bsRR3=bss(6,var.boot,T,T);bsRRT=bss(14,var.boot,T,T)
-      bsOR1=bss(7,var.boot,T,T);bsOR2=bss(8,var.boot,T,T);bsOR3=bss(9,var.boot,T,T);bsORT=bss(15,var.boot,T,T)
+      bsRR1= bss(4,var.boot,T,T);bsRR2= bss(5,var.boot,T,T);bsRR3= bss(6,var.boot,T,T);bsRRT=bss(14,var.boot,T,T)
+      bsOR1= bss(7,var.boot,T,T);bsOR2= bss(8,var.boot,T,T);bsOR3= bss(9,var.boot,T,T);bsORT=bss(15,var.boot,T,T)
       pmRR1=bss(19,var.boot,F,T);pmRR2=bss(20,var.boot,F,T);pmRR3=bss(21,var.boot,F,T)
       pmOR1=bss(22,var.boot,F,T);pmOR2=bss(23,var.boot,F,T);pmOR3=bss(24,var.boot,F,T)
     }
@@ -115,34 +116,34 @@ mediation_analysis=function(dt,cnfd=c(),dt2=NULL,cnfd2=c(),dt3=NULL,cnfd3=c(),nb
     pme_values=pse_values[,c(1,2,7)]
     if(nb>0){
       if(BF){
-        pse_values=cbind(pse_values[,1:6],rbind(
-          btbd(pse_values$effect[1],bsRD1,F),btbd(pse_values$effect[2],bsRD2,F),
-          btbd(pse_values$effect[3],bsRD3,F),btbd(pse_values$effect[4],bsRDT,F),
-          btbd(pse_values$effect[5],bsRR1,T),btbd(pse_values$effect[6],bsRR2,T),
-          btbd(pse_values$effect[7],bsRR3,T),btbd(pse_values$effect[8],bsRRT,T),
-          btbd(pse_values$effect[9],bsOR1,T),btbd(pse_values$effect[10],bsOR2,T),
-          btbd(pse_values$effect[11],bsOR3,T),btbd(pse_values$effect[12],bsORT,T)))
+        pse_values=cbind(pse_values[,1:6],rbind(bsRD1,bsRD2,bsRD3,bsRDT,bsRR1,bsRR2,bsRR3,bsRRT,bsOR1,bsOR2,bsOR3,bsORT))
+          # btbd(pse_values$effect[1],bsRD1,F),btbd(pse_values$effect[2],bsRD2,F),
+          # btbd(pse_values$effect[3],bsRD3,F),btbd(pse_values$effect[4],bsRDT,F),
+          # btbd(pse_values$effect[5],bsRR1,T),btbd(pse_values$effect[6],bsRR2,T),
+          # btbd(pse_values$effect[7],bsRR3,T),btbd(pse_values$effect[8],bsRRT,T),
+          # btbd(pse_values$effect[9],bsOR1,T),btbd(pse_values$effect[10],bsOR2,T),
+          # btbd(pse_values$effect[11],bsOR3,T),btbd(pse_values$effect[12],bsORT,T)))
       }else{
-        pse_values=cbind(pse_values[,1:6],rbind(
-          btbd(pse_values$effect[1],bsRD1,F),btbd(pse_values$effect[2],bsRD2,F),
-          btbd(pse_values$effect[3],bsRD3,F),btbd(pse_values$effect[4],bsRDT,F)))
+        pse_values=cbind(pse_values[,1:6],rbind(bsRD1,bsRD2,bsRD3,bsRDT))
+          # btbd(pse_values$effect[1],bsRD1,F),btbd(pse_values$effect[2],bsRD2,F),
+          # btbd(pse_values$effect[3],bsRD3,F),btbd(pse_values$effect[4],bsRDT,F)))
       }
-      colnames(pse_values)[7:ncol(pse_values)]=nnbb
+      colnames(pse_values)[7:ncol(pse_values)]=c(nnbb,nnba)
       if(abs(sum(sign(pse_values$effect[1:3])))==sum(pse_values$effect[1:3]!=0)){
         if(BF){
-          pme_values=cbind(pme_values,rbind(
-            btbd(pme_values$pm_effect[1],pmRD1,F),btbd(pme_values$pm_effect[2],pmRD2,F),
-            btbd(pme_values$pm_effect[3],pmRD3,F),rep(NA,3),
-            btbd(pme_values$pm_effect[5],pmRR1,F),btbd(pme_values$pm_effect[6],pmRR2,F),
-            btbd(pme_values$pm_effect[7],pmRR3,F),rep(NA,3),
-            btbd(pme_values$pm_effect[9],pmOR1,F),btbd(pme_values$pm_effect[10],pmOR2,F),
-            btbd(pme_values$pm_effect[11],pmOR3,F),rep(NA,3)))
+          pme_values=cbind(pme_values,rbind(pmRD1,pmRD2,pmRD3,pmRR1,pmRR2,pmRR3,pmOR1,pmOR2,pmOR3))
+            # btbd(pme_values$pm_effect[1],pmRD1,F),btbd(pme_values$pm_effect[2],pmRD2,F),
+            # btbd(pme_values$pm_effect[3],pmRD3,F),rep(NA,3),
+            # btbd(pme_values$pm_effect[5],pmRR1,F),btbd(pme_values$pm_effect[6],pmRR2,F),
+            # btbd(pme_values$pm_effect[7],pmRR3,F),rep(NA,3),
+            # btbd(pme_values$pm_effect[9],pmOR1,F),btbd(pme_values$pm_effect[10],pmOR2,F),
+            # btbd(pme_values$pm_effect[11],pmOR3,F),rep(NA,3)))
         }else{
-          pme_values=cbind(pme_values,rbind(
-            btbd(pme_values$pm_effect[1],pmRD1,F),btbd(pme_values$pm_effect[2],pmRD2,F),
-            btbd(pme_values$pm_effect[3],pmRD3,F),rep(NA,3)))
+          pme_values=cbind(pme_values,rbind(pmRD1,pmRD2,pmRD3))
+            # btbd(pme_values$pm_effect[1],pmRD1,F),btbd(pme_values$pm_effect[2],pmRD2,F),
+            # btbd(pme_values$pm_effect[3],pmRD3,F),rep(NA,3)))
         }
-        colnames(pme_values)[4:ncol(pme_values)]=nnbb
+        colnames(pme_values)[4:ncol(pme_values)]=c(nnbb,nnba)
       }
     }else{
       pse_values=pse_values[,1:6]
@@ -158,37 +159,37 @@ mediation_analysis=function(dt,cnfd=c(),dt2=NULL,cnfd2=c(),dt3=NULL,cnfd3=c(),nb
     colnames(pse_values)[3:ncol(pse_values)]=c("effect",nnaa,"pm_effect")
     pme_values=pse_values[,c(1,2,7)]
     if(nb>0){
-      bsRD4=bss(10,var.boot,F);bsRR4=bss(11,var.boot,T);bsOR4=bss(12,var.boot,T)
+      bsRD4=bss(10,var.boot,F,F);bsRR4=bss(11,var.boot,T,F);bsOR4=bss(12,var.boot,T,F)
       pmRD4=bss(25,var.boot,F,T);pmRR4=bss(26,var.boot,F,T);pmOR4=bss(27,var.boot,F,T)
       if(BF){
-        pse_values=cbind(pse_values[,1:6],rbind(
-          btbd(pse_values$effect[1],bsRD1,F),btbd(pse_values$effect[2],bsRD2,F),
-          btbd(pse_values$effect[3],bsRD3,F),btbd(pse_values$effect[4],bsRD4,F),btbd(pse_values$effect[5],bsRDT,F),
-          btbd(pse_values$effect[6],bsRR1,T),btbd(pse_values$effect[7],bsRR2,T),
-          btbd(pse_values$effect[8],bsRR3,T),btbd(pse_values$effect[9],bsRR4,T),btbd(pse_values$effect[10],bsRRT,T),
-          btbd(pse_values$effect[11],bsOR1,T),btbd(pse_values$effect[12],bsOR2,T),
-          btbd(pse_values$effect[13],bsOR3,T),btbd(pse_values$effect[14],bsOR4,T),btbd(pse_values$effect[15],bsORT,T)))
+        pse_values=cbind(pse_values[,1:6],rbind(bsRD1,bsRD2,bsRD3,bsRD4,bsRDT,bsRR1,bsRR2,bsRR3,bsRR4,bsRRT,bsOR1,bsOR2,bsOR3,bsOR4,bsORT))
+          # btbd(pse_values$effect[1],bsRD1,F),btbd(pse_values$effect[2],bsRD2,F),btbd(pse_values$effect[3],bsRD3,F),
+          # btbd(pse_values$effect[4],bsRD4,F),btbd(pse_values$effect[5],bsRDT,F),
+          # btbd(pse_values$effect[6],bsRR1,T),btbd(pse_values$effect[7],bsRR2,T),btbd(pse_values$effect[8],bsRR3,T),
+          # btbd(pse_values$effect[9],bsRR4,T),btbd(pse_values$effect[10],bsRRT,T),
+          # btbd(pse_values$effect[11],bsOR1,T),btbd(pse_values$effect[12],bsOR2,T),btbd(pse_values$effect[13],bsOR3,T),
+          # btbd(pse_values$effect[14],bsOR4,T),btbd(pse_values$effect[15],bsORT,T)))
       }else{
-        pse_values=cbind(pse_values[,1:6],rbind(
-          btbd(pse_values$effect[1],bsRD1,F),btbd(pse_values$effect[2],bsRD2,F),
-          btbd(pse_values$effect[3],bsRD3,F),btbd(pse_values$effect[4],bsRD4,F),btbd(pse_values$effect[5],bsRDT,F)))
+        pse_values=cbind(pse_values[,1:6],rbind(bsRD1,bsRD2,bsRD3,bsRD4,bsRDT))
+          # btbd(pse_values$effect[1],bsRD1,F),btbd(pse_values$effect[2],bsRD2,F),
+          # btbd(pse_values$effect[3],bsRD3,F),btbd(pse_values$effect[4],bsRD4,F),btbd(pse_values$effect[5],bsRDT,F)))
       }
-      colnames(pse_values)[7:ncol(pse_values)]=nnbb
+      colnames(pse_values)[7:ncol(pse_values)]=c(nnbb,nnba)
       if(abs(sum(sign(pse_values$effect[1:4])))==sum(pse_values$effect[1:4]!=0)){
         if(BF){
-          pme_values=cbind(pme_values,rbind(
-            btbd(pme_values$pm_effect[1],pmRD1,F),btbd(pme_values$pm_effect[2],pmRD2,F),
-            btbd(pme_values$pm_effect[3],pmRD3,F),btbd(pme_values$pm_effect[4],pmRD4,F),rep(NA,3),
-            btbd(pme_values$pm_effect[6],pmRR1,F),btbd(pme_values$pm_effect[7],pmRR2,F),
-            btbd(pme_values$pm_effect[8],pmRR3,F),btbd(pme_values$pm_effect[9],pmRR4,F),rep(NA,3),
-            btbd(pme_values$pm_effect[11],pmOR1,F),btbd(pme_values$pm_effect[12],pmOR2,F),
-            btbd(pme_values$pm_effect[13],pmOR3,F),btbd(pme_values$pm_effect[14],pmOR4,F),rep(NA,3)))
+          pme_values=cbind(pme_values,rbind(pmRD1,pmRD2,pmRD3,pmRD4,pmRR1,pmRR2,pmRR3,pmRR4,pmOR1,pmOR2,pmOR3,pmOR4))
+            # btbd(pme_values$pm_effect[1],pmRD1,F),btbd(pme_values$pm_effect[2],pmRD2,F),
+            # btbd(pme_values$pm_effect[3],pmRD3,F),btbd(pme_values$pm_effect[4],pmRD4,F),rep(NA,3),
+            # btbd(pme_values$pm_effect[6],pmRR1,F),btbd(pme_values$pm_effect[7],pmRR2,F),
+            # btbd(pme_values$pm_effect[8],pmRR3,F),btbd(pme_values$pm_effect[9],pmRR4,F),rep(NA,3),
+            # btbd(pme_values$pm_effect[11],pmOR1,F),btbd(pme_values$pm_effect[12],pmOR2,F),
+            # btbd(pme_values$pm_effect[13],pmOR3,F),btbd(pme_values$pm_effect[14],pmOR4,F),rep(NA,3)))
         }else{
-          pme_values=cbind(pme_values,rbind(
-            btbd(pme_values$pm_effect[1],pmRD1,F),btbd(pme_values$pm_effect[2],pmRD2,F),
-            btbd(pme_values$pm_effect[3],pmRD3,F),btbd(pme_values$pm_effect[4],pmRD4,F),rep(NA,3)))
+          pme_values=cbind(pme_values,rbind(pmRD1,pmRD2,pmRD3,pmRD4))
+            # btbd(pme_values$pm_effect[1],pmRD1,F),btbd(pme_values$pm_effect[2],pmRD2,F),
+            # btbd(pme_values$pm_effect[3],pmRD3,F),btbd(pme_values$pm_effect[4],pmRD4,F),rep(NA,3)))
         }
-        colnames(pme_values)[4:ncol(pme_values)]=nnbb
+        colnames(pme_values)[4:ncol(pme_values)]=c(nnbb,nnba)
       }
     }else{
       pse_values=pse_values[,1:6]

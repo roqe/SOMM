@@ -13,7 +13,11 @@ get_theta=function(dt,dt2,dt3,reNAME,grpID){
       y.reg=lme4::lmer(as.formula(paste0("Y~W+Q+S+(1|id)",nnn)), data=dt)
       total.effect=summary(lme4::lmer(as.formula(paste0("Y~W+(1|id)",nnn)), data=dt))$coef[,1]
     }
-    s.reg=lme4::lmer(as.formula(paste0("S~W+Q+(1|id)",nnn)), data=dt)
+    if(all(dt$S==0)){
+      s.reg=lm(S~.-Y, data=dt)
+    }else{
+      s.reg=lme4::lmer(as.formula(paste0("S~W+Q+(1|id)",nnn)), data=dt)
+    }
     q.reg=lme4::lmer(as.formula(paste0("Q~W+(1|id)",nnn)), data=dt)
   }else if(!is.null(grpID)){
     if(all(dt$Y%in%c(0,1))){
