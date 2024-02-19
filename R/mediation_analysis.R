@@ -131,7 +131,7 @@ mediation_analysis=function(dt,cnfd=c(),dt2=NULL,cnfd2=c(),dt3=NULL,cnfd3=c(),nb
       colnames(pse_values)[7:ncol(pse_values)]=c(nnbb,nnba)
       if(abs(sum(sign(pse_values$effect[1:3])))==sum(pse_values$effect[1:3]!=0)){
         if(BF){
-          pme_values=cbind(pme_values,rbind(pmRD1,pmRD2,pmRD3,pmRR1,pmRR2,pmRR3,pmOR1,pmOR2,pmOR3))
+          pme_values=cbind(pme_values,rbind(pmRD1,pmRD2,pmRD3,rep(NA,3),pmRR1,pmRR2,pmRR3,rep(NA,3),pmOR1,pmOR2,pmOR3,rep(NA,3)))
             # btbd(pme_values$pm_effect[1],pmRD1,F),btbd(pme_values$pm_effect[2],pmRD2,F),
             # btbd(pme_values$pm_effect[3],pmRD3,F),rep(NA,3),
             # btbd(pme_values$pm_effect[5],pmRR1,F),btbd(pme_values$pm_effect[6],pmRR2,F),
@@ -139,7 +139,7 @@ mediation_analysis=function(dt,cnfd=c(),dt2=NULL,cnfd2=c(),dt3=NULL,cnfd3=c(),nb
             # btbd(pme_values$pm_effect[9],pmOR1,F),btbd(pme_values$pm_effect[10],pmOR2,F),
             # btbd(pme_values$pm_effect[11],pmOR3,F),rep(NA,3)))
         }else{
-          pme_values=cbind(pme_values,rbind(pmRD1,pmRD2,pmRD3))
+          pme_values=cbind(pme_values,rbind(pmRD1,pmRD2,pmRD3,rep(NA,3)))
             # btbd(pme_values$pm_effect[1],pmRD1,F),btbd(pme_values$pm_effect[2],pmRD2,F),
             # btbd(pme_values$pm_effect[3],pmRD3,F),rep(NA,3)))
         }
@@ -177,7 +177,7 @@ mediation_analysis=function(dt,cnfd=c(),dt2=NULL,cnfd2=c(),dt3=NULL,cnfd3=c(),nb
       colnames(pse_values)[7:ncol(pse_values)]=c(nnbb,nnba)
       if(abs(sum(sign(pse_values$effect[1:4])))==sum(pse_values$effect[1:4]!=0)){
         if(BF){
-          pme_values=cbind(pme_values,rbind(pmRD1,pmRD2,pmRD3,pmRD4,pmRR1,pmRR2,pmRR3,pmRR4,pmOR1,pmOR2,pmOR3,pmOR4))
+          pme_values=cbind(pme_values,rbind(pmRD1,pmRD2,pmRD3,pmRD4,rep(NA,3),pmRR1,pmRR2,pmRR3,pmRR4,rep(NA,3),pmOR1,pmOR2,pmOR3,pmOR4,rep(NA,3)))
             # btbd(pme_values$pm_effect[1],pmRD1,F),btbd(pme_values$pm_effect[2],pmRD2,F),
             # btbd(pme_values$pm_effect[3],pmRD3,F),btbd(pme_values$pm_effect[4],pmRD4,F),rep(NA,3),
             # btbd(pme_values$pm_effect[6],pmRR1,F),btbd(pme_values$pm_effect[7],pmRR2,F),
@@ -185,7 +185,7 @@ mediation_analysis=function(dt,cnfd=c(),dt2=NULL,cnfd2=c(),dt3=NULL,cnfd3=c(),nb
             # btbd(pme_values$pm_effect[11],pmOR1,F),btbd(pme_values$pm_effect[12],pmOR2,F),
             # btbd(pme_values$pm_effect[13],pmOR3,F),btbd(pme_values$pm_effect[14],pmOR4,F),rep(NA,3)))
         }else{
-          pme_values=cbind(pme_values,rbind(pmRD1,pmRD2,pmRD3,pmRD4))
+          pme_values=cbind(pme_values,rbind(pmRD1,pmRD2,pmRD3,pmRD4,rep(NA,3)))
             # btbd(pme_values$pm_effect[1],pmRD1,F),btbd(pme_values$pm_effect[2],pmRD2,F),
             # btbd(pme_values$pm_effect[3],pmRD3,F),btbd(pme_values$pm_effect[4],pmRD4,F),rep(NA,3)))
         }
