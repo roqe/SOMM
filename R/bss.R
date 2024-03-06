@@ -1,7 +1,7 @@
 #' @import data.table
 bss=function(ind,var.boot,log_scale,pos){
   dd=var.boot[[ind]]
-  if(all(is.na(dd))){ return(list(pp=NA,btsd=NA)) }
+  if(all(is.na(dd))){ return(list(pp=NA,btsd=NA)) }else{ dd=dd[!is.na(dd)] }
   if(pos){ dd=dd[dd>=0] }
   cc=length(dd)
   if(log_scale){ vv=sum(dd>1)/cc }else{ vv=sum(dd>0)/cc }

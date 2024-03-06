@@ -94,11 +94,11 @@ mediation_analysis=function(dt,cnfd=c(),dt2=NULL,cnfd2=c(),dt3=NULL,cnfd3=c(),nb
     snow::stopCluster(cl)
 
     set.seed(seed)
-    bsRD1= bss(1,var.boot,F,F);bsRD2= bss(2,var.boot,F,F);bsRD3= bss(3,var.boot,F,F);bsRDT=bss(13,var.boot,F,F)
+    bsRD1=bss( 1,var.boot,F,F);bsRD2=bss( 2,var.boot,F,F);bsRD3=bss( 3,var.boot,F,F);bsRDT=bss(13,var.boot,F,F)
     pmRD1=bss(16,var.boot,F,T);pmRD2=bss(17,var.boot,F,T);pmRD3=bss(18,var.boot,F,T)
     if(BF){
-      bsRR1= bss(4,var.boot,T,T);bsRR2= bss(5,var.boot,T,T);bsRR3= bss(6,var.boot,T,T);bsRRT=bss(14,var.boot,T,T)
-      bsOR1= bss(7,var.boot,T,T);bsOR2= bss(8,var.boot,T,T);bsOR3= bss(9,var.boot,T,T);bsORT=bss(15,var.boot,T,T)
+      bsRR1=bss( 4,var.boot,T,T);bsRR2=bss( 5,var.boot,T,T);bsRR3=bss( 6,var.boot,T,T);bsRRT=bss(14,var.boot,T,T)
+      bsOR1=bss( 7,var.boot,T,T);bsOR2=bss( 8,var.boot,T,T);bsOR3=bss( 9,var.boot,T,T);bsORT=bss(15,var.boot,T,T)
       pmRR1=bss(19,var.boot,F,T);pmRR2=bss(20,var.boot,F,T);pmRR3=bss(21,var.boot,F,T)
       pmOR1=bss(22,var.boot,F,T);pmOR2=bss(23,var.boot,F,T);pmOR3=bss(24,var.boot,F,T)
     }
