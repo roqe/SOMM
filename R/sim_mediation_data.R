@@ -14,7 +14,7 @@
 #' apply(dat1,2,mean) #the proportion of Y should not be too skew (nearly 0 or 1)
 #' dat2=sim_mediation_data(c(0,1),1000,para) #continous exposure
 
-sim_mediation_data=function(exp,sample_size,SC){
+sim_mediation_data=function(exp,sample_size,SC,bn=T){
   if(length(exp)==1){
     W=c(rep(0,(1-exp)*sample_size),rep(1,exp*sample_size))
   }else{
@@ -22,6 +22,9 @@ sim_mediation_data=function(exp,sample_size,SC){
   }
   Q=rnorm(sample_size,SC[8]+SC[9]*W,SC[10])
   S=rnorm(sample_size,SC[5]+SC[6]*W+SC[7]*Q,SC[11])
-  Y=ifelse(rnorm(sample_size,SC[1]+SC[2]*W+SC[3]*Q+SC[4]*S,1)<0,0,1)
-  return(data.frame(Y=Y,W=W,Q=Q,S=S))
+  Y=rnorm(sample_size,SC[1]+SC[2]*W+SC[3]*Q+SC[4]*S,1)
+  if(bn){ Y=ifelse(Y<0,0,1) }
+  X1=rnorm(sample_size,1,1)
+  X2=rnorm(sample_size,-.5,.5)
+  return(data.frame(Y=Y,W=W,Q=Q,S=S,cbind(X1,X2)))
 }
