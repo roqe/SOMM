@@ -67,6 +67,7 @@ get_theta=function(dt,dt2,dt3,reNAME,grpID){
   delta.hat=data.table::data.table(I=ifelse("(Intercept)"%in%names(dc),dc[["(Intercept)"]],0),dc[1,c("W")],dc[1,..covnames])
   ss.hat=ifelse("S"%in%names(yc),ifelse(!is.na(yc[["S"]]),sqrt(mean(resid(s.reg)^2)),0),0)
   sq.hat=sqrt(mean(resid(q.reg)^2))
-  theta_hat=list(bc=unlist(beta.hat), ac=unlist(alpha.hat), dc=unlist(delta.hat), sq=sq.hat, ss=ss.hat)
+  sy.hat=sqrt(mean(resid(y.reg)^2))
+  theta_hat=list(bc=unlist(beta.hat), ac=unlist(alpha.hat), dc=unlist(delta.hat), sq=sq.hat, ss=ss.hat, sy=sy.hat)
   return(list(theta_hat=theta_hat,reg=list(y.reg=y.reg,s.reg=s.reg,q.reg=q.reg),total=total.effect))
 }

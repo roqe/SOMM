@@ -2,8 +2,7 @@ omega=function(SC,w,cnfd,cnfd2,cnfd3,BF){
   b0=SC$bc[["I"]]; bw=SC$bc[["W"]]; bq=SC$bc[["Q"]]; bs=SC$bc[["S"]]
   a0=SC$ac[["I"]]; aw=SC$ac[["W"]]; aq=SC$ac[["Q"]]
   d0=SC$dc[["I"]]; dw=SC$dc[["W"]]
-  sq=SC$sq
-  ss=SC$ss
+  sq=SC$sq; ss=SC$ss; sy=ifelse(BF,1,SC$sy)
   bl=length(SC$bc)
   if(bl>4){
     bX=SC$bc[5:bl]
@@ -16,7 +15,7 @@ omega=function(SC,w,cnfd,cnfd2,cnfd3,BF){
   if(length(w)==3){
     mu.s=a0+aw*w[2]+aq*mu.q+sum(aX*cnfd2)
     mu=b0+bw*w[1]+bq*mu.q+bs*mu.s+sum(bX*cnfd)
-    sd=sqrt(((aq*bs+bq)^2)*(sq^2)+(ss^2)*(bs^2)+1)
+    sd=sqrt(((aq*bs+bq)^2)*(sq^2)+(ss^2)*(bs^2)+sy^2)
     y=mu/sd
     dB0=exp(-y^2/2)/(sqrt(2*pi)*sd)
     dbw=dB0*w[1]
@@ -31,7 +30,7 @@ omega=function(SC,w,cnfd,cnfd2,cnfd3,BF){
     mu.q.star=d0+dw*w[4]+sum(dX*cnfd3)
     mu.s=a0+aw*w[2]+aq*mu.q.star+sum(aX*cnfd2)
     mu=b0+bw*w[1]+bq*mu.q+bs*mu.s+sum(bX*cnfd)
-    sd=sqrt((aq^2*bs^2+bq^2)*(sq^2)+(ss^2)*(bs^2)+1)
+    sd=sqrt((aq^2*bs^2+bq^2)*(sq^2)+(ss^2)*(bs^2)+sy^2)
     y=mu/sd
     dB0=exp(-y^2/2)/(sqrt(2*pi)*sd) #derivative beta 0
     dbw=dB0*w[1] #derivative beta s
