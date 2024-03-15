@@ -24,7 +24,7 @@
 #' dat_sg$S=0 # set the second mediator into 0
 #' res_sg_3=mediation_analysis(dat_sg)
 
-mediation_analysis=function(dt,cnfd=c(),dt2=NULL,cnfd2=c(),dt3=NULL,cnfd3=c(),nb=0,intv=3,unit=1,reNAME=NULL,grpID=NULL,mc=5,autoR=T,stra=1,seed=217){
+mediation_analysis=function(dt,cnfd=c(),dt2=NULL,cnfd2=c(),dt3=NULL,cnfd3=c(),nb=0,intv=4,unit=1,reNAME=NULL,grpID=NULL,mc=5,autoR=T,stra=1,seed=217){
   if(!is.null(cnfd)){
     if(!all(names(cnfd)%in%names(dt)) | is.null(names(cnfd)))
       return("Colnames of covariates should a subset of colnames of dataset.")
@@ -71,8 +71,8 @@ mediation_analysis=function(dt,cnfd=c(),dt2=NULL,cnfd2=c(),dt3=NULL,cnfd3=c(),nb
     o11=pnorm(sum(GT$total[c("(Intercept)","W",names(cnfd))]*c(1,x1,cnfd)))
     o10=pnorm(sum(GT$total[c("(Intercept)","W",names(cnfd))]*c(1,x0,cnfd)))
   }else{
-    o11=sum(GT$total[c("(Intercept)","W",names(cnfd))]*c(1,x1,cnfd))
-    o10=sum(GT$total[c("(Intercept)","W",names(cnfd))]*c(1,x0,cnfd))
+    o11=sum(GT$total[c("(Intercept)","W",names(cnfd))]*c(1,x1,cnfd))/GT$theta_hat$st
+    o10=sum(GT$total[c("(Intercept)","W",names(cnfd))]*c(1,x0,cnfd))/GT$theta_hat$st
   }
   nnaa=c("lower(a)","upper(a)","pv(a)")
   nnbb=c("lower(b)","upper(b)","pv(b)")
@@ -172,9 +172,9 @@ mediation_analysis=function(dt,cnfd=c(),dt2=NULL,cnfd2=c(),dt3=NULL,cnfd3=c(),nb
     pme_values$`upper(n)`[pme_values$`upper(n)`>1]=1
   }
   if(BF){
-    return(list(TOTAL=data.table(risk_difference=o11-o10,risk_ratio=o11/o10,odds_ratio=(o11/(1-o11))/(o10/(1-o10))),
+    return(list(TOTAL=data.table(crude_RD=o11-o10,crude_RR=o11/o10,crude_OR=(o11/(1-o11))/(o10/(1-o10))),
                 OMEGA=PP$omega,PSE=pse_values,PM=pme_values))
   }else{
-    return(list(TOTAL=data.table(mean_difference=o11-o10),OMEGA=PP$omega,PSE=pse_values,PM=pme_values))
+    return(list(TOTAL=data.table(crude_mean_diff=o11-o10),OMEGA=PP$omega,PSE=pse_values,PM=pme_values))
   }
 }

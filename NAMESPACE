@@ -3,6 +3,7 @@
 export(calc_true_value)
 export(get_theta)
 export(mediation_analysis)
+export(mma)
 export(sim_mediation_data)
 import(data.table)
 import(doParallel)

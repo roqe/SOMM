@@ -12,7 +12,7 @@ mediation_analysis(
   dt3 = NULL,
   cnfd3 = c(),
   nb = 0,
-  intv = 3,
+  intv = 4,
   unit = 1,
   reNAME = NULL,
   grpID = NULL,

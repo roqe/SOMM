@@ -7,11 +7,11 @@ get_theta=function(dt,dt2,dt3,reNAME,grpID){
     if(all(dt$Y%in%c(0,1))){
       print("Note: Applying random-effct models with probit link.")
       y.reg=lme4::glmer(as.formula(paste0("Y~W+Q+S+(1|id)",nnn)), family=binomial(link="probit"), data=dt)
-      total.effect=summary(lme4::glmer(as.formula(paste0("Y~W+(1|id)",nnn)), family = binomial(link="probit"), data=dt))$coef[,1]
+      t.reg=lme4::glmer(as.formula(paste0("Y~W+(1|id)",nnn)), family = binomial(link="probit"), data=dt)
     }else{
       print("Note: Applying random-effct models with identity link.")
       y.reg=lme4::lmer(as.formula(paste0("Y~W+Q+S+(1|id)",nnn)), data=dt)
-      total.effect=summary(lme4::lmer(as.formula(paste0("Y~W+(1|id)",nnn)), data=dt))$coef[,1]
+      t.reg=lme4::lmer(as.formula(paste0("Y~W+(1|id)",nnn)), data=dt)
     }
     if(all(dt$S==0)){
       s.reg=lm(as.formula(paste0("S~W+Q",nnn)), data=dt)
@@ -37,14 +37,15 @@ get_theta=function(dt,dt2,dt3,reNAME,grpID){
     if(all(dt$Y%in%c(0,1))){
       print("Note: Applying GLM models, binomial outcome, probit link.")
       y.reg=glm(Y~., family = binomial(link="probit"), data=dt)
-      total.effect=summary(glm(Y~.-Q-S, family = binomial(link="probit"), data=dt))$coef[,1]
+      t.reg=glm(Y~.-Q-S, family = binomial(link="probit"), data=dt)
     }else{
       print("Note: Applying GLM models, gaussian outcome.")
       y.reg=glm(Y~., family = gaussian, data=dt)
-      total.effect=summary(glm(Y~.-Q-S, data=dt))$coef[,1]
+      t.reg=glm(Y~.-Q-S, data=dt)
     }
     s.reg=lm(S~.-Y, data=dt)
     q.reg=lm(Q~.-S-Y, data=dt)
+    total.effect=summary(t.reg)$coef[,1]
   }
 
   yc=data.table::data.table(t(summary(y.reg)$coef[,1]))
@@ -68,6 +69,7 @@ get_theta=function(dt,dt2,dt3,reNAME,grpID){
   ss.hat=ifelse("S"%in%names(yc),ifelse(!is.na(yc[["S"]]),sqrt(mean(resid(s.reg)^2)),0),0)
   sq.hat=sqrt(mean(resid(q.reg)^2))
   sy.hat=sqrt(mean(resid(y.reg)^2))
-  theta_hat=list(bc=unlist(beta.hat), ac=unlist(alpha.hat), dc=unlist(delta.hat), sq=sq.hat, ss=ss.hat, sy=sy.hat)
-  return(list(theta_hat=theta_hat,reg=list(y.reg=y.reg,s.reg=s.reg,q.reg=q.reg),total=total.effect))
+  st.hat=sqrt(mean(resid(t.reg)^2))
+  theta_hat=list(bc=unlist(beta.hat), ac=unlist(alpha.hat), dc=unlist(delta.hat), sq=sq.hat, ss=ss.hat, sy=sy.hat, st=st.hat)
+  return(list(theta_hat=theta_hat,reg=list(y.reg=y.reg,s.reg=s.reg,q.reg=q.reg,t.reg=t.reg),total=total.effect))
 }

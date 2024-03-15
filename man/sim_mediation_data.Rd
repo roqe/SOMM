@@ -4,7 +4,7 @@
 \alias{sim_mediation_data}
 \title{Simulate data for analysis.}
 \usage{
-sim_mediation_data(exp, sample_size, SC)
+sim_mediation_data(exp, sample_size, SC, bn = T)
 }
 \arguments{
 \item{exp}{For binary exposure, enter the exposure prevalence. For continuous exposure, enter the mean and sd of a normal distribution.}
