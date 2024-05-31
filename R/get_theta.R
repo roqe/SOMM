@@ -19,6 +19,7 @@ get_theta=function(dt,dt2,dt3,reNAME,grpID){
       s.reg=lme4::lmer(as.formula(paste0("S~W+Q+(1|id)",nnn)), data=dt)
     }
     q.reg=lme4::lmer(as.formula(paste0("Q~W+(1|id)",nnn)), data=dt)
+    total.effect=summary(t.reg)$coef[,1]
   }else if(!is.null(grpID)){
     if(all(dt$Y%in%c(0,1))){
       print("Note: Applying conditional logistic models.")

@@ -1,5 +1,5 @@
 #' @export
-mma=function(dt,exposure,outcome,mediators,cid=NULL,cnfd=NULL,nb=500,mc=5,seed=217,ntp=100,oti=c(.25,.5,.75)){
+mma=function(dt,exposure,outcome,mediators,cnfd=NULL,nb=500,mc=5,seed=217,cid=NULL,ntp=100,oti=c(.25,.5,.75)){
   covariates=names(dt)[!names(dt)%in%c(exposure,outcome,mediators,cid)]
   regR=thetaHAT(dt,exposure,outcome,mediators,covariates,cid,ntp)
   BF=ifelse(all(dt$Y%in%c(0,1)),T,F)|!is.null(cid)
