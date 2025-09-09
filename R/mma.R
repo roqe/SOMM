@@ -2,7 +2,7 @@
 mma=function(dt,exposure,outcome,mediators,cnfd=NULL,nb=500,mc=5,seed=217,cid=NULL,ntp=100,oti=c(.25,.5,.75)){
   covariates=names(dt)[!names(dt)%in%c(exposure,outcome,mediators,cid)]
   regR=thetaHAT(dt,exposure,outcome,mediators,covariates,cid,ntp)
-  BF=ifelse(all(dt$Y%in%c(0,1)),T,F)|!is.null(cid)
+  BF=ifelse(all(dt$Y%in%c(0,1)),T,F)
   pathR=PSE(regR,cnfd,BF,exposure,outcome,mediators,covariates,cid)
 
   if(nb>0){
@@ -11,24 +11,27 @@ mma=function(dt,exposure,outcome,mediators,cnfd=NULL,nb=500,mc=5,seed=217,cid=NU
     pb = txtProgressBar(max = nb, style = 3)
     progress = function(n) setTxtProgressBar(pb, n)
     opts = list(progress = progress)
-    var.boot=foreach::foreach(boot.count=1:nb, .options.snow = opts, .combine=rbind, .packages = c("survival","data.table"),
-                              .export = c("PSE","thetaHAT","muu","vqq","bn","regR","stat","tran.npmle_est","predit.haz")) %dopar% {
+    var.boot=foreach::foreach(boot.count=1:nb, .options.snow = opts, .combine=rbind,
+                              .packages = c("survival","data.table"),
+                              .export = c("PSE","thetaHAT","muu","vqq","bn","regR","stat",
+                                          "tran.npmle_est","predit.haz")) %dopar% {
       seed=seed*boot.count
       dt.boot=as.data.frame(dt[sample(1:nrow(dt), replace=TRUE),])
       regR.boot=thetaHAT(dt.boot,exposure,outcome,mediators,covariates,cid,ntp)
       pathR.boot=PSE(regR.boot,cnfd,BF,exposure,outcome,mediators,covariates,cid)
-      return(pathR.boot$pse)
+      return(pathR.boot$PSE)
     }
+    cat("\n")
     if(BF){
-      ll=ifelse(is.list(pathR$pse),length(pathR$pse),1)
+      ll=ifelse(is.list(pathR$PSE),length(pathR$PSE),1)
       pb = txtProgressBar(max = ll, style = 3)
       progress = function(n) setTxtProgressBar(pb, n)
       pseR=foreach::foreach(t=1:ll, .options.snow = opts, .export = c("pvbd","btbd")) %dopar% {
         if(ll==1){
-          pse=pathR$pse
+          pse=pathR$PSE
           VBt=var.boot
         }else{
-          pse=pathR$pse[[t]]
+          pse=pathR$PSE[[t]]
           VBt=do.call(rbind,var.boot[,t])
         }
         path=colnames(pse)
@@ -38,16 +41,16 @@ mma=function(dt,exposure,outcome,mediators,cnfd=NULL,nb=500,mc=5,seed=217,cid=NU
         return(pseRt)
       }
     }else{
-      pseR=list(pvbd(stat="mean",path=names(pathR$pse),effect=pathR$pse,var.boot=var.boot,nv=0))
+      pseR=list(pvbd(stat="std_mean",path=names(pathR$PSE),effect=pathR$PSE,var.boot=var.boot,nv=0))
     }
     snow::stopCluster(cl)
     if(!is.null(cid)){
-      mm=quantile(1:nrow(pathR$invZ),oti)
+      mm=quantile(1:nrow(pathR$OMEGA),oti)
       ps=pseR[mm]
       names(ps)=paste0("pse_",round(mm))
-      return(list(OMEGA=cbind(quantile=mm,pathR$invZ[mm,]),PSE=ps))
+      return(list(OMEGA=cbind(quantile=mm,pathR$OMEGA[mm,]),PSE=ps))
     }else{
-      return(list(OMEGA=pathR$invZ,PSE=pseR[[1]]))
+      return(list(OMEGA=pathR$OMEGA,PSE=pseR[[1]]))
     }
   }
   return(pathR)
@@ -75,10 +78,15 @@ btbd=function(bb,nv){
 thetaHAT=function(dt,exposure,outcome,mediators,covariates,cid,ntp){
   Z=dt[[exposure]]
   Y=dt[[outcome]]
-  M=dt[mediators]
+  if(length(mediators)>1){
+    M=dt[mediators]
+  }else{
+    M=data.frame(dt[[mediators]])
+    colnames(M)=mediators
+  }
   X=dt[covariates]
   if(!is.null(cid)){ D=dt[[cid]] }
-  print(paste0("Note: Estimating PSE on ",exposure," > ",paste0(mediators,collapse = " > ")," > ",outcome))
+  print(paste0("Note: Forward Estimating PSE on ",exposure," > ",paste0(mediators,collapse = " > ")," > ",outcome))
 
   regR=lapply(0:ncol(M),function(i){
     if(i==ncol(M)){
@@ -137,7 +145,7 @@ PSE=function(regR,cnfd,BF,exposure,outcome,mediators,covariates,cid){
     names(pse)=nnn
   }
 
-  return(list(invZ=invZ,pse=pse))
+  return(list(OMEGA=invZ,PSE=pse))
 }
 
 stat=function(invZ,nnn){
