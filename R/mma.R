@@ -1,27 +1,30 @@
 #' @export
-mma=function(dt,exposure,outcome,mediators,cnfd=NULL,nb=500,mc=5,seed=217,cid=NULL,ntp=100,oti=c(.25,.5,.75)){
+mma=function(dt,exposure,outcome,mediators,cnfd=NULL,nb=500,mc=5,seed=217,cid=NULL,ntp=100,oti=c(.25,.5,.75),std=T,intv="weak",MS=NULL){
   covariates=names(dt)[!names(dt)%in%c(exposure,outcome,mediators,cid)]
-  regR=thetaHAT(dt,exposure,outcome,mediators,covariates,cid,ntp)
+  regR=thetaHAT(dt,exposure,outcome,mediators,covariates,cid,ntp,MS)
   BF=ifelse(all(dt$Y%in%c(0,1)),T,F)
-  pathR=PSE(regR,cnfd,BF,exposure,outcome,mediators,covariates,cid)
+  pathR=PSE(regR,cnfd,BF,exposure,outcome,mediators,covariates,cid,std,intv)
 
   if(nb>0){
     cl = snow::makeCluster(mc)
     doSNOW::registerDoSNOW(cl)
-    pb = txtProgressBar(max = nb, style = 3)
-    progress = function(n) setTxtProgressBar(pb, n)
-    opts = list(progress = progress)
+    # pb = txtProgressBar(max = nb, style = 3)
+    # progress = function(n) setTxtProgressBar(pb, n)
+    # opts = list(progress = progress)
+    opts = list()
     var.boot=foreach::foreach(boot.count=1:nb, .options.snow = opts, .combine=rbind,
                               .packages = c("survival","data.table"),
-                              .export = c("PSE","thetaHAT","muu","vqq","bn","regR","stat",
-                                          "tran.npmle_est","predit.haz")) %dopar% {
+                              .export = c("PSE","thetaHAT","muu","vqq","bn","regR","stat","sum_by_pow2",
+                                          "PSEnames","tran.npmle_est","predit.haz")) %dopar% {
       seed=seed*boot.count
-      dt.boot=as.data.frame(dt[sample(1:nrow(dt), replace=TRUE),])
-      regR.boot=thetaHAT(dt.boot,exposure,outcome,mediators,covariates,cid,ntp)
-      pathR.boot=PSE(regR.boot,cnfd,BF,exposure,outcome,mediators,covariates,cid)
+      ind=sample(1:nrow(dt), replace=TRUE)
+      dt.boot=as.data.frame(dt[ind,])
+      if(is.null(MS)){ MS.boot=MS }else{ MS.boot=data.frame(MS[ind,]); names(MS.boot)=names(MS) }
+      regR.boot=thetaHAT(dt.boot,exposure,outcome,mediators,covariates,cid,ntp,MS.boot)
+      pathR.boot=PSE(regR.boot,cnfd,BF,exposure,outcome,mediators,covariates,cid,std,intv)
       return(pathR.boot$PSE)
     }
-    cat("\n")
+    #cat("\n")
     if(BF){
       ll=ifelse(is.list(pathR$PSE),length(pathR$PSE),1)
       pb = txtProgressBar(max = ll, style = 3)
@@ -41,16 +44,16 @@ mma=function(dt,exposure,outcome,mediators,cnfd=NULL,nb=500,mc=5,seed=217,cid=NU
         return(pseRt)
       }
     }else{
-      pseR=list(pvbd(stat="std_mean",path=names(pathR$PSE),effect=pathR$PSE,var.boot=var.boot,nv=0))
+      pseR=list(pvbd(stat=ifelse(std,"std_mean","mean"),path=names(pathR$PSE),effect=pathR$PSE,var.boot=var.boot,nv=0))
     }
     snow::stopCluster(cl)
     if(!is.null(cid)){
       mm=quantile(1:nrow(pathR$OMEGA),oti)
       ps=pseR[mm]
       names(ps)=paste0("pse_",round(mm))
-      return(list(OMEGA=cbind(quantile=mm,pathR$OMEGA[mm,]),PSE=ps))
+      return(list(CO=cbind(quantile=mm,pathR$OMEGA[mm,]),PSE=ps))
     }else{
-      return(list(OMEGA=pathR$OMEGA,PSE=pseR[[1]]))
+      return(list(CO=pathR$OMEGA,PSE=pseR[[1]]))
     }
   }
   return(pathR)
@@ -67,15 +70,15 @@ pvbd=function(stat,path,effect,var.boot,nv){
 btbd=function(bb,nv){
   vv=mean(bb>nv)
   pb=min(vv,(1-vv))*2
-  exact=c(quantile(bb,c(.05,.95)),pb)
+  exact=c(quantile(bb,c(.025,.975)),pb)
   cc=rnorm(1e+6, mean=mean(bb,na.rm = T), sd=sd(bb,na.rm = T))
   vv=mean(cc>nv);
   pa=min(vv,(1-vv))*2
-  appxn=c(quantile(cc,c(.05,.95)),pa)
+  appxn=c(quantile(cc,c(.025,.975)),pa)
   return(c(exact,appxn))
 }
 
-thetaHAT=function(dt,exposure,outcome,mediators,covariates,cid,ntp){
+thetaHAT=function(dt,exposure,outcome,mediators,covariates,cid,ntp,MS){
   Z=dt[[exposure]]
   Y=dt[[outcome]]
   if(length(mediators)>1){
@@ -86,7 +89,7 @@ thetaHAT=function(dt,exposure,outcome,mediators,covariates,cid,ntp){
   }
   X=dt[covariates]
   if(!is.null(cid)){ D=dt[[cid]] }
-  print(paste0("Note: Forward Estimating PSE on ",exposure," > ",paste0(mediators,collapse = " > ")," > ",outcome))
+  #print(paste0("Note: Forward Estimating PSE on ",exposure," > ",paste0(mediators,collapse = " > ")," > ",outcome))
 
   regR=lapply(0:ncol(M),function(i){
     if(i==ncol(M)){
@@ -97,13 +100,17 @@ thetaHAT=function(dt,exposure,outcome,mediators,covariates,cid,ntp){
         print("Binary outcome, probit link.")
         return(glm(Y~.,data = cbind(Z,M,X),family = binomial(link="probit")))
       }else{
-        print("Continuous outcome, identity link.")
+        #print("Continuous outcome, identity link.")
         return(lm(Y~., data=cbind(Z,M,X)))
       }
     }else if(i==0){
       return(lm(M[[i+1]]~., data=cbind(Z,X)))
     }else{
-      return(lm(M[[i+1]]~., data=cbind(Z,M[1:i],X)))
+      if(!is.null(MS)){
+        return(lm(M[[i+1]]~., data=cbind(Z,MS[1:i],X)))
+      }else{
+        return(lm(M[[i+1]]~., data=cbind(Z,M[1:i],X)))
+      }
     }
   })
 
@@ -115,10 +122,10 @@ bn=function(j,i){
   return(bnv[(length(bnv)-j+1):length(bnv)])
 }
 
-PSE=function(regR,cnfd,BF,exposure,outcome,mediators,covariates,cid){
+PSE=function(regR,cnfd,BF,exposure,outcome,mediators,covariates,cid,std,intv){
   if(BF){ varYY=1 }else{ varYY=mean(resid(regR[[length(regR)]])^2) }
   varMY=sapply(1:(length(regR)-1),function(k){
-    varM=mean(resid(regR[[k]])^2)*vqq(k,regR,mediators)
+    varM=mean(resid(regR[[k]])^2)*vqq(k,regR,mediators,intv)
   })
   sdY=sqrt(varYY+sum(varMY))
   invZ=sapply(0:(2^length(mediators)),function(s){
@@ -127,10 +134,11 @@ PSE=function(regR,cnfd,BF,exposure,outcome,mediators,covariates,cid){
     if(!is.null(cid)){
       mu=data.table(mu+regR[[length(regR)]]$ptime.Ht)
       names(mu)=paste0("Ht",paste0(zz,collapse = ""))
+      return(mu/sdY)
     }else{
       names(mu)=paste0(ifelse(BF,"p","z"),paste0(zz,collapse = ""))
+      if(std==F&BF==F){ return(mu) }else{ return(mu/sdY) }
     }
-    return(mu/sdY)
   })
   if(is.list(invZ)){ invZ=rbindlist(list(invZ)) }
 
@@ -145,7 +153,23 @@ PSE=function(regR,cnfd,BF,exposure,outcome,mediators,covariates,cid){
     names(pse)=nnn
   }
 
-  return(list(OMEGA=invZ,PSE=pse))
+  ### match output of mmb
+  nnn=PSEnames(exposure,mediators,outcome,"strong")
+  pse=pse[nnn]
+
+  if(intv=="weak"){
+    nnn=PSEnames(exposure,mediators,outcome,intv)
+    pse=c(sum_by_pow2(pse[-length(pse)]),pse[length(pse)])
+    names(pse)=nnn
+  }
+
+  return(list(OMEGA=rev(invZ),PSE=pse))
+}
+
+sum_by_pow2 <- function(v) {
+  n <- length(v)
+  if (n == 1) return(v)                  # base case
+  c(sum(v[1:(n/2)]), sum_by_pow2(v[(n/2+1):n]))
 }
 
 stat=function(invZ,nnn){
@@ -181,7 +205,25 @@ muu=function(RR,zz,cnfd,w=0,mediators,covariates){
   return(muJ+sumM)
 }
 
-vqq=function(k,regR,mediators){
+# vqq=function(k,regR,mediators){
+#   CM=regR[[length(regR)]]
+#   if(length(CM)==6){
+#     thetaJK=CM$coef[mediators][k]
+#   }else{
+#     thetaJK=summary(CM)$coef[,1][mediators][k]
+#   }
+#   if((k+1)>(length(regR)-1)){
+#     sumKI=0
+#   }else{
+#     sumKI=sapply((k+1):(length(regR)-1),function(i){
+#       thetaIK=summary(regR[[i]])$coef[,1][names(thetaJK)]
+#       return(thetaIK^2*vqq(i,regR,mediators))
+#     })
+#   }
+#   return(thetaJK^2+sum(sumKI))
+# }
+
+vqq=function(k,regR,mediators,intv){
   CM=regR[[length(regR)]]
   if(length(CM)==6){
     thetaJK=CM$coef[mediators][k]
@@ -193,8 +235,12 @@ vqq=function(k,regR,mediators){
   }else{
     sumKI=sapply((k+1):(length(regR)-1),function(i){
       thetaIK=summary(regR[[i]])$coef[,1][names(thetaJK)]
-      return(thetaIK^2*vqq(i,regR,mediators))
+      return(thetaIK^2*vqq(i,regR,mediators,intv))
     })
   }
-  return(thetaJK^2+sum(sumKI))
+  if(intv=="weak"){
+    return((thetaJK+sum(sumKI))^2)
+  }else{
+    return(thetaJK^2+sum(sumKI))
+  }
 }
